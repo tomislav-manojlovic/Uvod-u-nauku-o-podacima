@@ -1,0 +1,52 @@
+---
+output:
+  word_document: default
+  pdf_document: default
+  html_document: default
+---
+
+## R Markdown
+```{r}
+library(ggplot2)
+library(dplyr)
+library(readr)
+library(scales)
+```
+
+```{r}
+data = read.csv("train.csv")
+View(data)
+```
+
+```{r}
+summary(data)
+```
+
+```{r}
+str(data)
+```
+
+```{r}
+summary(data$SalePrice)
+```
+```{r}
+ggplot(data, aes(x = SalePrice)) +
+  geom_histogram(binwidth = 10000, fill = "#1f78b4", color = "black", alpha = 0.7) +
+  scale_x_continuous(labels = comma) +
+  labs(
+    title = "Distribucija Prodajne Cene",
+    x = "Prodajna Cena (USD)",
+    y = "Broj Kuca"
+  ) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+
+ggplot(data, aes(x = SalePrice)) +
+  geom_histogram(binwidth = 10000, fill = "#1f78b4", color = "black", alpha = 0.7) +
+  labs(
+    title = "Distribucija Prodajne Cene",
+    x = "Prodajna Cena (USD)",
+    y = "Broj kuca"
+  ) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+
+```
