@@ -294,55 +294,46 @@ data$BsmtExposure[is.na(data$BsmtExposure)] <- "NoBasement"
 # kategorijska ORDINALNA
 # NA znaci da ne postoji garaza
 
-#View(data %>%
-#       filter(is.na(GarageYrBlt)))
-# postoji red gde su prisutni podaci za GarageType, GarageCars i GarageArea, a svi ostali su NA
+
+#Prvo cemo zameniti sve NA vrednosti GarageYrBlt godinom izgradnje kuce.  
+
+data$GarageYrBlt[is.na(data$GarageYrBlt)] <- data$YearBuilt[is.na(data$GarageYrBlt)]
+
+#Postoji jedan red u test skupu gde je godina izgranje garaze 2207. Ocigledno je da je doslo do greske.  
+#Takode, ta kuca je izgradena 2006, a renovirana 2007. godine, pa cemo zameniti tu vrednost.
+
+data$GarageYrBlt[data$GarageYrBlt==2207] <- 2007
+
+
+
+#Postoji jedan red gde je GarageType = "Detachd", a svi ostali podaci o garazi su NA.
+
+data$GarageArea[data$Id == 2577] <- 0
+data$GarageCars[data$Id == 2577] <- 0
+data$GarageType[data$Id == 2577] <- NA
+
+#Postoji red gde su prisutni podaci za GarageType, GarageCars i GarageArea, a svi ostali podaci o garazi su NA.
+
 tbl <- xtabs(~ GarageFinish, data = data[!is.na(data$GarageFinish), ])
 most_common_finish <- names(which.max(tbl))
-data$GarageFinish[is.na(data$GarageFinish) & data$GarageArea > 0] <- most_common_finish
+data$GarageFinish[data$Id == 2127] <- most_common_finish
 
 tbl <- xtabs(~ GarageQual, data = data[!is.na(data$GarageQual), ])
 most_common_qual <- names(which.max(tbl))
-data$GarageQual[is.na(data$GarageQual) & data$GarageArea > 0] <- most_common_qual
+data$GarageQual[data$Id == 2127] <- most_common_qual
 
 tbl <- xtabs(~ GarageCond, data = data[!is.na(data$GarageCond), ])
 most_common_cond <- names(which.max(tbl))
-data$GarageCond[is.na(data$GarageCond) & data$GarageArea > 0] <- most_common_cond
-
-most_common_yr <- round(median(data$GarageYrBlt, na.rm = TRUE))
-data$GarageYrBlt[is.na(data$GarageYrBlt) & data$GarageArea > 0] <- most_common_yr
-
-# -----------------------------------
-
-#View(data %>%
-#       filter(is.na(GarageCars)))
-#View(data %>%
-#       filter(GarageType=="Detchd"))
-# postoji jedan red gde je GarageType Detachd, a sve ostalo NA
-median_area <- round(median(data$GarageArea[data$GarageType == "Detchd"], na.rm = TRUE))
-data$GarageArea[is.na(data$GarageCars)] <- median_area
-
-median_yr <- round(median(data$GarageYrBlt, na.rm = TRUE))
-data$GarageYrBlt[is.na(data$GarageCars)] <- median_yr
-
-most_common_finish <- names(which.max(table(data$GarageFinish)))
-data$GarageFinish[is.na(data$GarageCars)] <- most_common_finish
-
-most_common_qual <- names(which.max(table(data$GarageQual)))
-data$GarageQual[is.na(data$GarageCars)] <- most_common_qual
-
-most_common_cond <- names(which.max(table(data$GarageCond)))
-data$GarageCond[is.na(data$GarageCars)] <- most_common_cond
-data$GarageCars[is.na(data$GarageCars)] <- 1
+data$GarageCond[data$Id == 2127] <- most_common_cond
 
 
-#View(data[which(is.na(data$GarageType)), ])
 
 data$GarageType[is.na(data$GarageType)] <- "NoGarage"
-data$GarageYrBlt[is.na(data$GarageYrBlt)] <- "NoGarage"
 data$GarageFinish[is.na(data$GarageFinish)] <- "NoGarage"
 data$GarageQual[is.na(data$GarageQual)] <- "NoGarage"
 data$GarageCond[is.na(data$GarageCond)] <- "NoGarage"
+
+
 
 # LotFrontage - duzina placa koja se granici sa ulicom 
 # numericka
@@ -909,13 +900,103 @@ data$TotalPorchSF <- data$OpenPorchSF + data$EnclosedPorch +
 cor(data$SalePrice, data$TotalPorchSF, use= "pairwise.complete.obs")
 # Slaba korelacija
 
+#Dodata je promenljiva TotalBaths, koja oznacava ukupan broj kupatila. Od nje cemo napraviti ordinalnu, kategorijsku promenljivu sa nivoima: malo (< 2), srednje (2,3), mnogo (> 3).  
+#Postoji korelacija izmedu ciljne promenljive i TotalBaths.
+
 data$TotalBaths <- data$BsmtFullBath + data$FullBath + 
   0.5 * (data$BsmtHalfBath + data$HalfBath)
 
-ggplot(data=data[!is.na(data$SalePrice),], aes(x=as.factor(TotalBaths), y=SalePrice)) + 
-  geom_point(col='blue') + geom_smooth(method = "lm", se=FALSE, color="black", aes(group=1)) +
-  scale_y_continuous(breaks= seq(0, 800000, by=100000), labels = comma)
-# Postoji neka korelacija
+data$TotalBaths <- cut(
+  data$TotalBaths,
+  breaks = c(-Inf, 1.5, 3, Inf),
+  labels = c("Malo", "Srednje", "Mnogo"),
+  right = TRUE
+)
+#
+table(data$TotalBaths)
+data$TotalBaths <- as.integer(data$TotalBaths)
+
+ggplot(data=data[!is.na(data$SalePrice),], aes(x = TotalBaths, y = SalePrice)) +
+  geom_boxplot(fill = "skyblue", alpha = 0.7) +
+  scale_y_continuous(labels = scales::comma) +
+  labs(
+    title = "Odnos izmedu ukupnog broja kupatila i cene kuce",
+    x = "Ukupan broj kupatila",
+    y = "Cena kuce (SalePrice)"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+  )
+
+
+
+data$IsNew <- ifelse(data$YrSold==data$YearBuilt, 1, 0)
+data$IsNew = as.factor(data$IsNew)
+
+
+data$HasBath <- ifelse(data$BsmtFullBath + data$FullBath + 0.5 * (data$BsmtHalfBath + data$HalfBath) > 0, 1, 0)
+data$HasBath <- as.factor(data$HasBath)
+
+data$HasBsmt <- ifelse(data$TotalBsmtSF > 0, 1, 0)
+data$HasBsmt <- as.factor(data$HasBsmt)
+
+# garage, fireplace, pool
+data$HasGarage <- ifelse(data$GarageArea > 0, 1, 0)
+data$HasGarage <- as.factor(data$HasGarage)
+
+data$HasFireplace <- ifelse(data$Fireplaces > 0, 1, 0)
+data$HasFireplace <- as.factor(data$HasFireplace)
+
+data$HasPool <- ifelse(data$PoolArea > 0, 1, 0)
+data$HasPool <- as.factor(data$HasPool)
+
+# Cene zavise od toga da li je kuca nova.
+
+ggplot(data[!is.na(data$SalePrice), ], aes(x = IsNew, y = SalePrice)) +
+  geom_boxplot(fill = "skyblue", alpha = 0.7) +
+  scale_y_continuous(labels = comma) +
+  labs(title = "Odnos izmedu novosti kuce i cene",
+       x = "IsNew",
+       y = "Cena kuce") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+
+# Svaka kuca ima makar jedno kupatilo, pa nam ovaj atribut nije znacajan.
+
+ggplot(data[!is.na(data$SalePrice), ], aes(x = HasBath, y = SalePrice)) +
+  geom_boxplot(fill = "skyblue", alpha = 0.7) +
+  scale_y_continuous(labels = comma) +
+  labs(title = "Odnos izmedu prisustva kupatila i cene",
+       x = "HasBath",
+       y = "Cena kuce") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+
+data$HasBath <- NULL
+
+#Postojanje podruma utice na SalePrice.
+
+# Boxplot za HasBsmt
+ggplot(data[!is.na(data$SalePrice), ], aes(x = HasBsmt, y = SalePrice)) +
+  geom_boxplot(fill = "skyblue", alpha = 0.7) +
+  scale_y_continuous(labels = comma) +
+  labs(title = "Odnos izmedu prisustva podruma i cene",
+       x = "HasBsmt",
+       y = "Cena kuce") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+
+
+#Mogu se uociti dva reda gde je HouseAge manji od 0, sto znaci da je kuca prodata pre nego sto je izgradena, odnosno da je doslo do greske.  
+#Obrisacemo ta dva reda. Takode, postoji red gde je YearBuilt > YearRemodAdd.
+
+data <- data %>% 
+  filter(HouseAge >= 0)
+data <- data %>% 
+  filter(YearBuilt <= YearRemodAdd)
+
+
 
 
 data.train <- data[1:nrow(data.train), ]
