@@ -6,7 +6,7 @@ library(readr)
 library(scales)
 
 data.train = read.csv("./data/train.csv")
-View(data.train)
+# View(data.train)
 
 data.test = read.csv("./data/test.csv")
 summary(data.test)
@@ -168,15 +168,15 @@ tbl <- xtabs(~Electrical, data = data)
 most_common <- names(which.max(tbl))
 data$Electrical[is.na(data$Electrical)] <- most_common
 
-View(data)
+# View(data)
 
 # MasVnrType - tip malterisanja
 # takodje chr -> kat.
 # takodje ima malo NA 23, pa se moze iskoristiti najcesca vrednost
 str(data$MasVnrType)
 
-View(data %>%
-       filter(is.na(MasVnrType) & !is.na(MasVnrArea)))
+#View(data %>%
+#       filter(is.na(MasVnrType) & !is.na(MasVnrArea)))
 # Postoji jedna vrednost gde je MasVnrType NA, a MasVnrArea nije 0, sto ukazuje da je tu doslo do greske
 # uzimamo najcesce vrednosti gde area nije 0
 tbl <- xtabs(~MasVnrType, data = data[data$MasVnrArea != 0, ])
@@ -214,31 +214,31 @@ data$MasVnrArea[is.na(data$MasVnrArea)] <- data_median
 # NA znaci da nema podruma, mozemo dodati novu kategoriju "NONE"
 # ima 81 NA vrednosti
 
-View(data %>%
-       filter(is.na(BsmtCond) & TotalBsmtSF > 0))
+#View(data %>%
+#       filter(is.na(BsmtCond) & TotalBsmtSF > 0))
 # postoje 3 reda gde nema podataka za BsmtCond, a postoje ostali podaci vezani za Bsmt
 tbl <- xtabs(~ BsmtCond, data = data[data$TotalBsmtSF > 0 & !is.na(data$BsmtCond), ])
 most_common <- names(which.max(tbl))
 data$BsmtCond[is.na(data$BsmtCond) & data$TotalBsmtSF > 0] <- most_common
 
 
-View(data %>%
-       filter(is.na(BsmtExposure) & TotalBsmtSF > 0))
+#View(data %>%
+#       filter(is.na(BsmtExposure) & TotalBsmtSF > 0))
 # postoje 3 reda gde nema podataka za BsmtExposure, a postoje ostali podaci vezani za Bsmt
 tbl <- xtabs(~ BsmtExposure, data = data[data$TotalBsmtSF > 0 & !is.na(data$BsmtExposure), ])
 most_common <- names(which.max(tbl))
 data$BsmtExposure[is.na(data$BsmtExposure) & data$TotalBsmtSF > 0] <- most_common
 
 
-View(data %>%
-       filter(is.na(BsmtFinType2) & TotalBsmtSF > 0))
+#View(data %>%
+#       filter(is.na(BsmtFinType2) & TotalBsmtSF > 0))
 # postoje 3 reda gde nema podataka za BsmtFinType2, a postoje ostali podaci vezani za Bsmt
 tbl <- xtabs(~ BsmtFinType2, data = data[data$BsmtFinSF2 > 0 & !is.na(data$BsmtFinType2), ])
 most_common <- names(which.max(tbl))
 data$BsmtFinType2[is.na(data$BsmtFinType2) & data$BsmtFinSF2 > 0] <- most_common
 
-View(data %>%
-       filter(is.na(BsmtQual) & TotalBsmtSF > 0))
+#View(data %>%
+#       filter(is.na(BsmtQual) & TotalBsmtSF > 0))
 # postoje 2 reda gde nema podataka za BsmtQual, a postoje ostali podaci vezani za Bsmt
 tbl <- xtabs(~ BsmtQual, data = data[data$TotalBsmtSF > 0 & !is.na(data$BsmtQual), ])
 most_common <- names(which.max(tbl))
@@ -251,8 +251,8 @@ data$BsmtUnfSF[is.na(data$BsmtUnfSF)] <- 0
 data$TotalBsmtSF[is.na(data$TotalBsmtSF)] <- 0
 
 # ---------------------------
-View(data %>%
-       filter(is.na(BsmtQual) ))
+#View(data %>%
+#       filter(is.na(BsmtQual) ))
 
 str(data$BsmtQual)
 
@@ -294,8 +294,8 @@ data$BsmtExposure[is.na(data$BsmtExposure)] <- "NoBasement"
 # kategorijska ORDINALNA
 # NA znaci da ne postoji garaza
 
-View(data %>%
-       filter(is.na(GarageYrBlt)))
+#View(data %>%
+#       filter(is.na(GarageYrBlt)))
 # postoji red gde su prisutni podaci za GarageType, GarageCars i GarageArea, a svi ostali su NA
 tbl <- xtabs(~ GarageFinish, data = data[!is.na(data$GarageFinish), ])
 most_common_finish <- names(which.max(tbl))
@@ -314,10 +314,10 @@ data$GarageYrBlt[is.na(data$GarageYrBlt) & data$GarageArea > 0] <- most_common_y
 
 # -----------------------------------
 
-View(data %>%
-       filter(is.na(GarageCars)))
-View(data %>%
-       filter(GarageType=="Detchd"))
+#View(data %>%
+#       filter(is.na(GarageCars)))
+#View(data %>%
+#       filter(GarageType=="Detchd"))
 # postoji jedan red gde je GarageType Detachd, a sve ostalo NA
 median_area <- round(median(data$GarageArea[data$GarageType == "Detchd"], na.rm = TRUE))
 data$GarageArea[is.na(data$GarageCars)] <- median_area
@@ -336,7 +336,7 @@ data$GarageCond[is.na(data$GarageCars)] <- most_common_cond
 data$GarageCars[is.na(data$GarageCars)] <- 1
 
 
-View(data[which(is.na(data$GarageType)), ])
+#View(data[which(is.na(data$GarageType)), ])
 
 data$GarageType[is.na(data$GarageType)] <- "NoGarage"
 data$GarageYrBlt[is.na(data$GarageYrBlt)] <- "NoGarage"
@@ -352,7 +352,7 @@ data$GarageCond[is.na(data$GarageCond)] <- "NoGarage"
 
 # uradi NA kao da je 0 (ne granici se sa ulicom)?
 str(data$LotFrontage)
-View(data[which(is.na(data$LotFrontage)), ])
+#View(data[which(is.na(data$LotFrontage)), ])
 
 # popunjavamo vrednostima medijane za neighbourhood kom pripada
 
@@ -391,7 +391,7 @@ data$Alley[is.na(data$Alley)] <- "NoAccess"
 # MiscFeature nema poente posto postoji MiscVal
 # da li dropovati
 # MiscVal uvek tačno odražava postojanje/odsustvo MiscFeature
-View(data[is.na(data$MiscFeature), ])
+#View(data[is.na(data$MiscFeature), ])
 
 data$MiscFeature <- NULL
 
@@ -411,13 +411,13 @@ ggplot(data, aes(x = PoolQC, y = PoolArea)) +
   ) +
   theme_minimal()
 
-View(data)
+#View(data)
 
 # ------------------------------------- dodatak iz test skupa
 sort(colSums(is.na(data))[colSums(is.na(data)) > 0])
 
-View(data %>%
-       filter(is.na(Exterior1st)))
+#View(data %>%
+#       filter(is.na(Exterior1st)))
 
 tbl <- xtabs(~Exterior1st, data = data)
 most_common <- names(which.max(tbl))
@@ -427,50 +427,113 @@ tbl <- xtabs(~Exterior2nd, data = data)
 most_common <- names(which.max(tbl))
 data$Exterior2nd[is.na(data$Exterior2nd)] <- most_common
 
-View(data %>%
-       filter(is.na(KitchenQual)))
+#View(data %>%
+#       filter(is.na(KitchenQual)))
 
 tbl <- xtabs(~KitchenQual, data = data)
 most_common <- names(which.max(tbl))
 data$KitchenQual[is.na(data$KitchenQual)] <- most_common
 
-View(data %>%
-       filter(is.na(SaleType)))
+#View(data %>%
+#       filter(is.na(SaleType)))
 
 tbl <- xtabs(~SaleType, data = data)
 most_common <- names(which.max(tbl))
 data$SaleType[is.na(data$SaleType)] <- most_common
 
-View(data %>%
-       filter(is.na(Utilities)))
+#View(data %>%
+#       filter(is.na(Utilities)))
 
 tbl <- xtabs(~Utilities, data = data)
 most_common <- names(which.max(tbl))
 data$Utilities[is.na(data$Utilities)] <- most_common
 
-View(data)
+#View(data)
 
 # 2 NA za BsmtFullBath i BsmtHalfBath su za redove gde ne postoji Basement
 # tu cemo staviti 0
-View(data %>%
-       filter(is.na(BsmtFullBath)))
+#View(data %>%
+#       filter(is.na(BsmtFullBath)))
 
 data$BsmtFullBath[is.na(data$BsmtFullBath)] <- 0
 data$BsmtHalfBath[is.na(data$BsmtHalfBath)] <- 0
 
-View(data %>%
-       filter(is.na(Functional)))
+#View(data %>%
+#       filter(is.na(Functional)))
 tbl <- xtabs(~Functional, data = data)
 most_common <- names(which.max(tbl))
 data$Functional[is.na(data$Functional)] <- most_common
 
-View(data %>%
-       filter(is.na(MSZoning)))
+#View(data %>%
+#       filter(is.na(MSZoning)))
 tbl <- xtabs(~MSZoning, data = data)
 most_common <- names(which.max(tbl))
 data$MSZoning[is.na(data$MSZoning)] <- most_common
 
 sort(colSums(is.na(data))[colSums(is.na(data)) > 0])
+
+
+
+### Enkodiranje promenljivih ###################################################
+
+data$ExterQual <- factor(data$ExterQual, levels = c("Po", "Fa", "TA", "Gd", "Ex"), ordered = TRUE)
+data$ExterCond <- factor(data$ExterCond, levels = c("Po", "Fa", "TA", "Gd", "Ex"), ordered = TRUE)
+data$BsmtQual <- factor(data$BsmtQual, levels = c("NoBasement", "Po", "Fa", "TA", "Gd", "Ex"), ordered = TRUE)
+data$BsmtCond <- factor(data$BsmtCond, levels = c("NoBasement", "Po", "Fa", "TA", "Gd", "Ex"), ordered = TRUE)
+data$HeatingQC <- factor(data$HeatingQC, levels = c("Po", "Fa", "TA", "Gd", "Ex"), ordered = TRUE)
+data$KitchenQual <- factor(data$KitchenQual, levels = c("Po", "Fa", "TA", "Gd", "Ex"), ordered = TRUE)
+data$FireplaceQu <- factor(data$FireplaceQu, levels = c("NoFireplace", "Po", "Fa", "TA", "Gd", "Ex"), ordered = TRUE)
+data$GarageQual <- factor(data$GarageQual, levels = c("NoGarage", "Po", "Fa", "TA", "Gd", "Ex"), ordered = TRUE)
+data$GarageCond <- factor(data$GarageCond, levels = c("NoGarage", "Po", "Fa", "TA", "Gd", "Ex"), ordered = TRUE)
+
+data$PoolQC <- factor(data$PoolQC, levels = c("NoPool", "Fa", "TA", "Gd", "Ex"), ordered = TRUE)
+
+data$BsmtExposure <- factor(data$BsmtExposure, levels = c("NoBasement", "No", "Mn", "Av", "Gd"), ordered = TRUE)
+
+data$BsmtFinType1 <- factor(data$BsmtFinType1, levels = c("NoBasement", "Unf", "LwQ", "Rec", "BLQ", "ALQ", "GLQ"), ordered = TRUE)
+data$BsmtFinType2 <- factor(data$BsmtFinType2, levels = c("NoBasement", "Unf", "LwQ", "Rec", "BLQ", "ALQ", "GLQ"), ordered = TRUE)
+
+data$Functional <- factor(data$Functional, levels = c("Sal", "Sev", "Maj2", "Maj1", "Mod", "Min2", "Min1", "Typ"), ordered = TRUE)
+
+data$GarageFinish <- factor(data$GarageFinish, levels = c("NoGarage", "Unf", "RFn", "Fin"), ordered = TRUE)
+#---------------------------------------
+# pretvoricemo ordinalne u integer
+# kako bi model razlikovao nivoe
+# koristimo revalue funkciju
+
+data$ExterQual <- as.integer(data$ExterQual)
+data$ExterCond <- as.integer(data$ExterCond)
+data$BsmtQual <- as.integer(data$BsmtQual)
+data$BsmtCond <- as.integer(data$BsmtCond)
+data$HeatingQC <- as.integer(data$HeatingQC)
+data$KitchenQual <- as.integer(data$KitchenQual)
+data$FireplaceQu <- as.integer(data$FireplaceQu)
+data$GarageQual <- as.integer(data$GarageQual)
+data$GarageCond <- as.integer(data$GarageCond)
+data$PoolQC <- as.integer(data$PoolQC)
+data$BsmtExposure <- as.integer(data$BsmtExposure)
+data$BsmtFinType1 <- as.integer(data$BsmtFinType1)
+data$BsmtFinType2 <- as.integer(data$BsmtFinType2)
+data$Functional <- as.integer(data$Functional)
+data$GarageFinish <- as.integer(data$GarageFinish)
+
+# table(data$PoolQC)
+#---------------------------------------
+
+nominalne <- data %>% 
+  select(where(is.character)) %>% 
+  names()
+data[nominalne] <- lapply(data[nominalne], factor)
+
+#---------------------------------------
+# Moze se primetiti da je MSSubClass numericka, a u stvari predstavlja nominalnu, kategorijsku promenljivu.
+table(data$MSSubClass)
+data$MSSubClass <- as.factor(data$MSSubClass)
+str(data$MSSubClass)
+
+#str(data)
+
+################################################################################
 
 # -----------------------------------------------------
 
@@ -778,4 +841,290 @@ na_columns
 # GarageCars i GarageArea (koje su zajedno u korelaciji pa cemo da izbacimo jednu od te dve)
 
 
+### Feature engineering ########################################################
+
+data.test$SalePrice <- NA
+data <- rbind(data.train, data.test)
+
+table(data$YrSold)
+
+# View(data %>% filter(is.na(BsmtFullBath)))
+
+# View(data)
+
+data$TotalSF <- data$TotalBsmtSF + data$GrLivArea
+
+ggplot(data = data[!is.na(data$SalePrice),], aes(x = TotalSF, y = SalePrice)) +
+  geom_point(col = 'blue') +
+  geom_smooth(method = "lm", se = FALSE, color = "black") +
+  scale_y_continuous(breaks = seq(0, 800000, by = 100000), labels = scales::comma) +
+  theme_minimal()
+
+# Postoji jaka korelacija 
+
+
+data$TotalFinishedSF <- data$GrLivArea + data$BsmtFinSF1 +
+  data$BsmtFinSF2
+
+ggplot(data = data[!is.na(data$SalePrice),], aes(x = TotalFinishedSF, y = SalePrice)) +
+  geom_point(col = 'blue') +
+  geom_smooth(method = "lm", se = FALSE, color = "black") +
+  scale_y_continuous(breaks = seq(0, 800000, by = 100000), labels = scales::comma) +
+  theme_minimal()
+
+# Postoji jaka korelacija
+
+data$HouseAge <- data$YrSold - data$YearBuilt
+data$HouseRemodAge <- data$YrSold - data$YearRemodAdd
+
+data$IsNew <- ifelse(data$YrSold==data$YearBuilt, 1, 0)
+
+# za godinu uzimamo godinu remodela
+ggplot(data=data[!is.na(data$SalePrice),], aes(x=HouseAge, y=SalePrice))+
+  geom_point(col='blue') + geom_smooth(method = "lm", se=FALSE, color="black", aes(group=1)) +
+  scale_y_continuous(breaks= seq(0, 800000, by=100000), labels = comma)
+# Starije kuce imaju manju cenu
+
+data$Remodeled <- ifelse(data$YearBuilt==data$YearRemodAdd, 0, 1) 
+# 0 - ne
+# 1 - da
+
+df_summary <- data[!is.na(data$SalePrice), ] %>%
+  group_by(Remodeled) %>%
+  summarise(
+    median_price = median(SalePrice, na.rm = TRUE),
+    count = n()
+  )
+
+ggplot(df_summary, aes(x = as.factor(Remodeled), y = median_price)) +
+  geom_col(fill = 'blue') +           
+  geom_text(aes(label = count, y = median_price + 20000), size = 6) + 
+  scale_y_continuous(breaks = seq(0, 800000, by = 50000), labels = comma) +
+  theme_minimal()
+# Vidi se da one koje nisu remodelirane imaju vecu cenu
+
+
+data$TotalPorchSF <- data$OpenPorchSF + data$EnclosedPorch +
+  data$X3SsnPorch + data$ScreenPorch 
+cor(data$SalePrice, data$TotalPorchSF, use= "pairwise.complete.obs")
+# Slaba korelacija
+
+data$TotalBaths <- data$BsmtFullBath + data$FullBath + 
+  0.5 * (data$BsmtHalfBath + data$HalfBath)
+
+ggplot(data=data[!is.na(data$SalePrice),], aes(x=as.factor(TotalBaths), y=SalePrice)) + 
+  geom_point(col='blue') + geom_smooth(method = "lm", se=FALSE, color="black", aes(group=1)) +
+  scale_y_continuous(breaks= seq(0, 800000, by=100000), labels = comma)
+# Postoji neka korelacija
+
+
+data.train <- data[1:nrow(data.train), ]
+data.test  <- data[(nrow(data.train)+1):nrow(data), ] 
+
+data.test$SalePrice <- NULL
+
+
+### Implementacija i procena modela ############################################
+
+# Load necessary libraries
+library(tidyverse)
+library(caret)       # for modeling and evaluation
+library(car)         # for VIF if needed
+library(glmnet)      # for Ridge and Lasso regression
+library(Metrics)
+
+str(data.train)
+summary(data.train$SalePrice)
+
+# model_data <- data.train %>%
+#   select(SalePrice, OverallQual, GrLivArea, GarageCars, TotalBsmtSF, YearBuilt)
+
+numeric_data.train <- data.train[sapply(data.train, is.numeric)]
+
+cor_matrix <- cor(numeric_data.train, use = "pairwise.complete.obs")
+cor_with_saleprice <- cor_matrix[, "SalePrice"]
+cor_with_saleprice <- sort(cor_with_saleprice, decreasing = TRUE)
+print(cor_with_saleprice)
+
+# proveravamo simetricnost vrednosti atributa SalePrice
+
+hist(data.train$SalePrice)
+
+data.train = data.train %>% mutate(SalePrice = log10(SalePrice))
+
+hist(data.train$SalePrice)
+
+# koristimo metod forward selection za konstruisanje modela linearne regresije
+
+model1 = lm(SalePrice ~ TotalSF, data = data.train) # atribut sa najboljom korelacijom
+summary(model1)
+
+plot(data.train$TotalSF, data.train$SalePrice)
+
+model2 = lm(SalePrice ~ TotalSF + OverallQual, data = data.train) # atribut sa drugom najboljom korelacijom
+summary(model2)
+
+plot(data.train$OverallQual, data.train$SalePrice)
+
+# gledamo korelaciju izmedju atributa da bismo izbegli dodavanje atributa
+# koji bi prouzrokovali multikoliearnost
+
+cor(data.train$TotalSF, data.train$TotalFinishedSF)
+cor(data.train$OverallQual, data.train$TotalFinishedSF)
+cor(data.train$TotalSF, data.train$GrLivArea)
+
+cor(data.train$TotalSF, data.train$GarageCars)
+cor(data.train$OverallQual, data.train$GarageCars)
+
+model3 = lm(SalePrice ~ TotalSF + OverallQual + GarageCars, data = data.train)
+summary(model3)
+
+plot(data.train$GarageCars, data.train$SalePrice)
+
+model4 = lm(SalePrice ~ TotalSF + OverallQual + GarageCars + TotalBaths, data = data.train)
+summary(model4)
+
+vif(model4) # vidimo da nema multikolinearnosti (vif < 5)
+
+# mozemo da nastavimo sa dodavanjem
+
+model5 = lm(SalePrice ~ TotalSF + OverallQual + GarageCars + TotalBaths + HouseAge, data = data.train)
+summary(model5)
+
+vif(model5) # vidimo da nema multikolinearnosti (vif < 5)
+
+# sada da ubacimo neku kategorijsku promenljivu
+
+model6 = lm(SalePrice ~ TotalSF + OverallQual + GarageCars + TotalBaths + HouseAge + Neighborhood, data = data.train)
+summary(model6)
+
+model7 = lm(SalePrice ~ TotalSF + OverallQual + GarageCars + TotalBaths + HouseAge + Neighborhood + TotRmsAbvGrd, data = data.train)
+summary(model7)
+
+vif(model7)
+
+cor(data.train$TotalSF, data.train$TotRmsAbvGrd)
+
+plot(data.train$TotRmsAbvGrd, data.train$TotalSF)
+
+model8 = lm(SalePrice ~ TotalSF * TotRmsAbvGrd + OverallQual + GarageCars + TotalBaths + HouseAge + Neighborhood, data = data.train)
+summary(model8)
+
+# ipak cemo da izbacimo TotRmsAbvGrd
+
+model9 = lm(SalePrice ~ TotalSF + OverallQual + GarageCars + TotalBaths + HouseAge + Neighborhood + KitchenQual, data = data.train)
+summary(model9)
+
+vif(model9)
+
+model10 = lm(SalePrice ~ TotalSF + OverallQual + GarageCars + TotalBaths + HouseAge + Neighborhood + KitchenQual + Fireplaces, data = data.train)
+summary(model10)
+
+vif(model10)
+
+model11 = lm(SalePrice ~ TotalSF + OverallQual + GarageCars + TotalBaths + HouseAge + IsNew + Neighborhood + KitchenQual + Fireplaces, data = data.train)
+summary(model11)
+
+
+## Ridge i Lasso
+
+x_train <- model.matrix(SalePrice ~ ., data = data.train)[, -1]
+y_train <- data.train$SalePrice
+
+###############
+
+for (col in names(data.test)) {
+  if (is.factor(data.train[[col]])) {
+    data.test[[col]] <- factor(data.test[[col]], levels = levels(data.train[[col]]))
+  }
+}
+
+x_test <- model.matrix(~ ., data = data.test)[, -1]
+x_test <- x_test[, colnames(x_train)]   # align columns with training matrix
+
+# 4. Fit Ridge model with cross-validation
+set.seed(123)
+ridge_cv <- cv.glmnet(x_train, y_train, alpha = 0)   # alpha = 0 → Ridge regression
+lasso_cv <- cv.glmnet(x_train, y_train, alpha = 1)   # alpha = 0 → Lasso regression
+
+# 5. Best lambda
+ridge_cv$lambda.min
+lasso_cv$lambda.min
+
+# 6. Predict on test data
+ridge_preds = predict(ridge_cv, newx = x_test, s = "lambda.min")
+lasso_preds = predict(lasso_cv, newx = x_test, s = "lambda.min")
+
+# 7. (Optional) Evaluate on train set to check fit
+train_preds_ridge = predict(ridge_cv, newx = x_train, s = "lambda.min")
+train_preds_lasso = predict(lasso_cv, newx = x_train, s = "lambda.min")
+train_preds_model11 = predict(model11, newdata = data.train)
+
+sqrt(mean((y_train - train_preds_ridge)^2))  # Ridge RMSE on training set
+sqrt(mean((y_train - train_preds_lasso)^2))  # Lasso RMSE on training set
+sqrt(mean((data.train$SalePrice - train_preds_model11)^2))  # Model11 RMSE on training set
+
+###############
+
+## Random Forest
+
+library(randomForest)
+
+# Convert categorical variables to numeric
+dummies <- dummyVars(~ ., data = data.train[, !names(data.train) %in% "SalePrice"])
+data.train.num <- data.frame(predict(dummies, newdata = data.train))
+data.train.num$SalePrice <- data.train$SalePrice
+
+data.test.num <- data.frame(predict(dummies, newdata = data.test))
+
+# Fit Random Forest
+rf_model <- randomForest(SalePrice ~ ., data = data.train.num, ntree = 500, mtry = 10, importance = TRUE)
+rf_model
+# varImpPlot(rf_model)
+
+## XGBoost
+
+library(xgboost)
+
+train_idx <- sample(seq_len(nrow(data.train)), size = 0.8 * nrow(data.train))
+train_data <- data.train[train_idx, ]
+val_data   <- data.train[-train_idx, ]
+
+dummies <- dummyVars(~ ., data = train_data[, !names(train_data) %in% "SalePrice"])
+train_data_num <- data.frame(predict(dummies, newdata = train_data))
+train_data_num$SalePrice <- train_data$SalePrice
+
+val_data_num <- data.frame(predict(dummies, newdata = val_data))
+
+# Training matrix
+train_matrix <- as.matrix(train_data_num[, !names(train_data_num) %in% "SalePrice"])
+train_label  <- train_data_num$SalePrice
+
+# Test matrix
+val_matrix <- as.matrix(val_data_num)
+val_label  <- val_data$SalePrice
+
+xgb_model = xgboost(data = train_matrix, label = train_label, nrounds = 100, objective = "reg:squarederror", verbose = 0)
+
+pred_xgb = predict(xgb_model, newdata = val_matrix)
+
+rmse_score = rmse(val_data$SalePrice, pred_xgb)
+mae_score = mae(val_data$SalePrice, pred_xgb)
+
+rmse_score
+
+## Support Vector Regression (SVR)
+
+library(e1071)
+
+svr_model = svm(SalePrice ~ ., data = data.train)
+pred_svr = predict(svr_model, newdata = data.test)
+
+## Neural Networks (ANNs)
+
+library(neuralnet)
+
+nn_model = neuralnet(SalePrice ~ OverallQual + GrLivArea + GarageCars + TotalBaths,
+                     data = data.train, hidden = c(5, 3))
+plot(nn_model)
 
