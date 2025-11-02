@@ -31,7 +31,8 @@ dupes %>% select(Order)
 
 # primecujemo da kolona Lot.Frontage negde ima vrednost a negde je NA pa cemo odbaciti sve duplikate
 nrow(data)
-data = data[-c(dupes$Order), ] # izbacili smo duplikate
+data.train <- data.train %>%
+  filter(!(Order %in% dupes$Order)) # izbacili smo duplikate
 nrow(data)
 
 # train test split
@@ -160,9 +161,12 @@ ggplot(data.train, aes(x = PoolArea, y = SalePrice)) + geom_point()
 values = c(1499, 1266, 2072, 1571, 957, 2116, 2181, 1768, 18, 1761,
            2667, 2821, 2820, 2195, 713, 716, 2254, 926, 2294, 727, 1289)
 
-nrow(data)
-data = data[-values, ] # izbacili smo duplikate
-nrow(data)
+nrow(data.train)
+data.train <- data.train %>%
+  filter(!(Order %in% values)) # izbacili smo outliere
+nrow(data.train)
+
+# View(data.train)
 
 # ---------------------------------------------------------------------------- #
 
@@ -572,7 +576,7 @@ summary(data)
 # lokacija je bitna - Neighborhood
 # pogodnosti uticu na cenu - GarageCars, Fireplaces, FullBath
 
-ggplot(data, aes(x = GrLivArea, y = SalePrice)) +
+ggplot(data.train, aes(x = GrLivArea, y = SalePrice)) +
   geom_point(alpha = 0.7) +
   scale_x_continuous(labels = comma) +
   scale_y_continuous(labels = comma) +
@@ -583,7 +587,7 @@ ggplot(data, aes(x = GrLivArea, y = SalePrice)) +
   ) +
   theme(plot.title = element_text(hjust = 0.5, face = "bold"))
 
-ggplot(data, aes(x = TotalBsmtSF, y = SalePrice)) +
+ggplot(data.train, aes(x = TotalBsmtSF, y = SalePrice)) +
   geom_point(alpha = 0.7) +
   scale_x_continuous(labels = comma) +
   scale_y_continuous(labels = comma) +
@@ -594,7 +598,7 @@ ggplot(data, aes(x = TotalBsmtSF, y = SalePrice)) +
   ) +
   theme(plot.title = element_text(hjust = 0.5, face = "bold"))
 
-ggplot(data, aes(x = LotArea, y = SalePrice)) +
+ggplot(data.train, aes(x = LotArea, y = SalePrice)) +
   geom_point(alpha = 0.7) +
   scale_x_continuous(labels = comma) +
   scale_y_continuous(labels = comma) +
