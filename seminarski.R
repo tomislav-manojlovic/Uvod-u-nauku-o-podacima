@@ -875,6 +875,13 @@ ggplot(data = data[!is.na(data$SalePrice),], aes(x = TotalFinishedSF, y = SalePr
 # Postoji jaka korelacija
 
 data$HouseAge <- data$YrSold - data$YearBuilt
+
+
+View(data %>% filter(HouseRemodAge < 0))
+# postoje dva reda gde je YearRemodAdd nakon YrSold
+# zamenicemo YearRemodAdd sa YearBuilt
+data$YearRemodAdd[data$YearRemodAdd > data$YrSold] <- data$YearBuilt[data$YearRemodAdd > data$YrSold]
+
 data$HouseRemodAge <- data$YrSold - data$YearRemodAdd
 
 
