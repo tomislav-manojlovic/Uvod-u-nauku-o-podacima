@@ -24,167 +24,21 @@ dupes = data[duplicated(data %>%
                             select(MSSubClass, MSZoning, LotArea, SalePrice), fromLast = T), ]
 
 nrow(dupes)
-dupes %>% select(Order)
+# dupes %>% select(Order)
 
 # View the duplicates
 # View(dupes)
 
 # primecujemo da kolona Lot.Frontage negde ima vrednost a negde je NA pa cemo odbaciti sve duplikate
 nrow(data)
-data.train <- data.train %>%
+data <- data %>%
   filter(!(Order %in% dupes$Order)) # izbacili smo duplikate
 nrow(data)
 
-# train test split
-
-set.seed(123)
-train_idx = sample(seq_len(nrow(data)), size = 0.8 * nrow(data))
-
-data.train = data[train_idx, ]
-data.test = data[-train_idx, ]
-
-# --- OUTLIERI --------------------------------------------------------------- #
-
-# plotovanje svih numerickih karakteristika
-
-ggplot(data.train, aes(x = MSSubClass, y = SalePrice)) + geom_point()
-
-ggplot(data.train, aes(x = LotFrontage, y = SalePrice)) + geom_point()
-data.train %>% filter(LotFrontage > 300) %>% select(Order)
-# 1499, 1266
-
-ggplot(data.train, aes(x = LotArea, y = SalePrice)) + geom_point()
-data.train %>% filter(LotArea > 100000) %>% select(Order)
-# 2072, 1571, 957, 2116
-
-ggplot(data.train, aes(x = OverallQual, y = SalePrice)) + geom_point()
-data.train %>% filter(OverallQual == 10 & SalePrice < 200000) %>% select(Order)
-# 1499, 2181
-
-ggplot(data.train, aes(x = OverallCond, y = SalePrice)) + geom_point()
-data.train %>% filter(OverallCond == 6 & SalePrice > 600000) %>% select(Order)
-# 1768
-data.train %>% filter(OverallCond == 2 & SalePrice > 300000) %>% select(Order)
-# 18
-data.train %>% filter(OverallCond == 5 & SalePrice > 700000) %>% select(Order)
-# 1761
-
-ggplot(data.train, aes(x = YearBuilt, y = SalePrice)) + geom_point()
-data.train %>% filter(YearBuilt < 1900 & SalePrice > 400000) %>% select(Order)
-# 2667
-
-ggplot(data.train, aes(x = YearRemodAdd, y = SalePrice)) + geom_point()
-data.train %>% filter(YearRemodAdd < 1970 & SalePrice > 300000) %>% select(Order)
-# 957
-
-ggplot(data.train, aes(x = MasVnrArea, y = SalePrice)) + geom_point()
-
-ggplot(data.train, aes(x = BsmtFinSF1, y = SalePrice)) + geom_point()
-data.train %>% filter(BsmtFinSF1 > 4000) %>% select(Order)
-# 1499
-
-ggplot(data.train, aes(x = BsmtFinSF2, y = SalePrice)) + geom_point()
-data.train %>% filter(BsmtFinSF2 > 500 & SalePrice > 500000) %>% select(Order)
-# 424
-
-ggplot(data.train, aes(x = BsmtUnfSF, y = SalePrice)) + geom_point()
-
-ggplot(data.train, aes(x = TotalBsmtSF, y = SalePrice)) + geom_point()
-data.train %>% filter(TotalBsmtSF > 6000) %>% select(Order)
-# 1499
-
-ggplot(data.train, aes(x = X1stFlrSF, y = SalePrice)) + geom_point()
-data.train %>% filter(X1stFlrSF > 4500) %>% select(Order)
-# 1499
-
-ggplot(data.train, aes(x = X2ndFlrSF, y = SalePrice)) + geom_point()
-
-ggplot(data.train, aes(x = LowQualFinSF, y = SalePrice)) + geom_point()
-data.train %>% filter(LowQualFinSF > 500 & SalePrice > 400000) %>% select(Order)
-# 2667
-
-ggplot(data.train, aes(x = GrLivArea, y = SalePrice)) + geom_point()
-data.train %>% filter(GrLivArea > 4500) %>% select(Order)
-# 1499, 2181
-
-ggplot(data.train, aes(x = BsmtFullBath, y = SalePrice)) + geom_point()
-
-ggplot(data.train, aes(x = BsmtHalfBath, y = SalePrice)) + geom_point()
-data.train %>% filter(BsmtHalfBath == 2) %>% select(Order)
-# View(data.train %>% filter(BsmtHalfBath == 2))
-# 2821, 2820
-data.train %>% filter(BsmtHalfBath == 1 & SalePrice > 700000) %>% select(Order)
-# 1768
-
-ggplot(data.train, aes(x = FullBath, y = SalePrice)) + geom_point()
-
-ggplot(data.train, aes(x = HalfBath, y = SalePrice)) + geom_point()
-
-ggplot(data.train, aes(x = BedroomAbvGr, y = SalePrice)) + geom_point()
-data.train %>% filter(BedroomAbvGr == 8) %>% select(Order)
-# 2195
-
-ggplot(data.train, aes(x = KitchenAbvGr, y = SalePrice)) + geom_point()
-data.train %>% filter(KitchenAbvGr == 3) %>% select(Order)
-# 713, 716
-data.train %>% filter(KitchenAbvGr == 0) %>% select(Order)
-# 2254, 2821, 2820
-
-ggplot(data.train, aes(x = TotRmsAbvGrd, y = SalePrice)) + geom_point()
-data.train %>% filter(TotRmsAbvGrd > 12) %>% select(Order)
-# 2195, 926
-
-ggplot(data.train, aes(x = Fireplaces, y = SalePrice)) + geom_point()
-
-ggplot(data.train, aes(x = GarageYrBlt, y = SalePrice)) + geom_point()
-
-ggplot(data.train, aes(x = GarageCars, y = SalePrice)) + geom_point()
-
-ggplot(data.train, aes(x = GarageArea, y = SalePrice)) + geom_point()
-
-ggplot(data.train, aes(x = WoodDeckSF, y = SalePrice)) + geom_point()
-data.train %>% filter(WoodDeckSF > 1000) %>% select(Order)
-# 2294
-
-ggplot(data.train, aes(x = OpenPorchSF, y = SalePrice)) + geom_point()
-data.train %>% filter(OpenPorchSF > 500) %>% select(Order)
-# 727, 1289
-
-ggplot(data.train, aes(x = EnclosedPorch, y = SalePrice)) + geom_point()
-
-ggplot(data.train, aes(x = X3SsnPorch, y = SalePrice)) + geom_point()
-
-ggplot(data.train, aes(x = ScreenPorch, y = SalePrice)) + geom_point()
-
-ggplot(data.train, aes(x = PoolArea, y = SalePrice)) + geom_point()
-
-values = c(1499, 1266, 2072, 1571, 957, 2116, 2181, 1768, 18, 1761,
-           2667, 2821, 2820, 2195, 713, 716, 2254, 926, 2294, 727, 1289)
-
-nrow(data.train)
-data.train <- data.train %>%
-  filter(!(Order %in% values)) # izbacili smo outliere
-nrow(data.train)
-
-# View(data.train)
-
-# ---------------------------------------------------------------------------- #
-
-#missing_percent <- colSums(is.na(data)) / nrow(data) * 100
-#missing_percent[missing_percent > 0]
-
-# ----------------------------------------------------
-# NA VREDNOSTI
-
-# data.test$SalePrice <- NA
-
-data <- rbind(data.train, data.test)
-dim(data)
-dim(data.test)
 
 
+### NA VREDNOSTI ###############################################################
 
-#------------------------------------------- za novi dataset
 na_columns = sort(colSums(is.na(data))[colSums(is.na(data)) > 0])
 
 na_columns
@@ -210,10 +64,10 @@ data$Electrical[data$Electrical == ""] <- most_common # promenjeno
 # takodje ima malo NA 23, pa se moze iskoristiti najcesca vrednost
 str(data$MasVnrType)
 
-View(data %>%
-       filter(MasVnrType == ""))
-View(data %>%
-       filter(is.na(MasVnrArea)))
+# View(data %>%
+#       filter(MasVnrType == ""))
+# View(data %>%
+#       filter(is.na(MasVnrArea)))
 
 
 tbl <- xtabs(~MasVnrType, data = data)
@@ -249,21 +103,21 @@ data$MasVnrArea[is.na(data$MasVnrArea)] <- data_median
 # NA znaci da nema podruma, mozemo dodati novu kategoriju "NONE"
 # ima 79 NA vrednosti
 
-View(data %>%
-       filter(is.na(BsmtCond) & TotalBsmtSF > 0))
+#View(data %>%
+ #      filter(is.na(BsmtCond) & TotalBsmtSF > 0))
 
 
-View(data %>%
-       filter(is.na(BsmtExposure) & TotalBsmtSF > 0))
+#View(data %>%
+ #      filter(is.na(BsmtExposure) & TotalBsmtSF > 0))
 
-View(data %>%
-       filter(is.na(BsmtFinType2) & TotalBsmtSF > 0))
+#View(data %>%
+ #      filter(is.na(BsmtFinType2) & TotalBsmtSF > 0))
 
-View(data %>%
-       filter(is.na(BsmtQual) & TotalBsmtSF > 0))
+#View(data %>%
+ #      filter(is.na(BsmtQual) & TotalBsmtSF > 0))
 
-View(data %>%
-       filter(TotalBsmtSF == 0))
+#View(data %>%
+ #      filter(TotalBsmtSF == 0))
 
 # postoji jedan red gde su BsmtFinSF1, BsmtFinSF2, BsmtUnfSF i TotalBsmtSF NA, tu stavljamo 0
 data$BsmtFinSF1[is.na(data$BsmtFinSF1)] <- 0
@@ -277,7 +131,6 @@ data$BsmtExposure[data$BsmtExposure == ""] <- "NoBasement"
 data$BsmtFinType1[data$BsmtFinType1 == ""] <- "NoBasement"
 data$BsmtFinType2[data$BsmtFinType2 == ""] <- "NoBasement"
 
-# ---------------------------
 #View(data %>%
 #       filter(is.na(BsmtQual) ))
 
@@ -336,18 +189,10 @@ sort(colSums(is.na(data))[colSums(is.na(data)) > 0])
 
 
 
-View(data %>% filter(is.na(GarageYrBlt)))
-View(data)
+# View(data %>% filter(is.na(GarageYrBlt)))
+# View(data)
 
-#data$Garage.Yr.Blt[is.na(data$Garage.Yr.Blt)] <- data$Year.Built[is.na(data$Garage.Yr.Blt)]
-
-
-#Postoji jedan red u test skupu gde je godina izgranje garaze 2207. Ocigledno je da je doslo do greske.  
-#Takode, ta kuca je izgradena 2006, a renovirana 2007. godine, pa cemo zameniti tu vrednost.
-
-data$GarageYrBlt[data$GarageYrBlt==2207] <- 2007
-
-View(data[data$Order == 1357 | data$Order == 2237,])
+# View(data[data$Order == 1357 | data$Order == 2237,])
 
 #Postoji jedan red gde je GarageType = "Detachd", a svi ostali podaci o garazi su NA.
 
@@ -399,8 +244,8 @@ str(data$LotFrontage)
 
 # popunjavamo vrednostima medijane za neighbourhood kom pripada
 
-View(data %>% filter(is.na(LotFrontage)))
-View(data)
+# View(data %>% filter(is.na(LotFrontage)))
+# View(data)
 
 data <- data %>%
   group_by(Neighborhood) %>%
@@ -461,18 +306,17 @@ data$PoolQC[is.na(data$PoolQC)] <- "NoPool"
 ggplot(data, aes(x = PoolQC, y = PoolArea)) +
   geom_boxplot(fill = "#1f78b4", alpha = 0.7) +
   labs(
-    title = "Povezanost između kvaliteta bazena (PoolQC) i površine bazena (PoolArea)",
-    x = "Kvalitet bazena",
-    y = "Površina bazena (sq ft)"
+    title = "Povezanost između PoolQC i PoolArea",
+    x = "PoolQC",
+    y = "PoolArea"
   ) +
   theme_minimal()
 
-View(data)
+# View(data)
 
 sort(colSums(is.na(data))[colSums(is.na(data)) > 0])
-# ---------------------------------------- KRAJ ZA NOVI SKUP
 
-### Enkodiranje promenljivih ###################################################
+### ENKODIRANJE PROMENLJIVIH ###################################################
 
 data$ExterQual <- factor(data$ExterQual, levels = c("Po", "Fa", "TA", "Gd", "Ex"), ordered = TRUE)
 data$ExterCond <- factor(data$ExterCond, levels = c("Po", "Fa", "TA", "Gd", "Ex"), ordered = TRUE)
@@ -494,10 +338,9 @@ data$BsmtFinType2 <- factor(data$BsmtFinType2, levels = c("NoBasement", "Unf", "
 data$Functional <- factor(data$Functional, levels = c("Sal", "Sev", "Maj2", "Maj1", "Mod", "Min2", "Min1", "Typ"), ordered = TRUE)
 
 data$GarageFinish <- factor(data$GarageFinish, levels = c("NoGarage", "Unf", "RFn", "Fin"), ordered = TRUE)
-#---------------------------------------
+
 # pretvoricemo ordinalne u integer
 # kako bi model razlikovao nivoe
-# koristimo revalue funkciju
 
 data$ExterQual <- as.integer(data$ExterQual)
 data$ExterCond <- as.integer(data$ExterCond)
@@ -515,8 +358,6 @@ data$BsmtFinType2 <- as.integer(data$BsmtFinType2)
 data$Functional <- as.integer(data$Functional)
 data$GarageFinish <- as.integer(data$GarageFinish)
 
-# table(data$PoolQC)
-#---------------------------------------
 str(data)
 
 nominalne <- data %>% 
@@ -524,7 +365,6 @@ nominalne <- data %>%
   names()
 data[nominalne] <- lapply(data[nominalne], factor)
 
-#---------------------------------------
 # Moze se primetiti da je MSSubClass numericka, a u stvari predstavlja nominalnu, kategorijsku promenljivu.
 table(data$MSSubClass)
 data$MSSubClass <- as.factor(data$MSSubClass)
@@ -532,18 +372,265 @@ str(data$MSSubClass)
 
 #str(data)
 
-################################################################################
 
-# -----------------------------------------------------
+
+### NEOBICNE VREDNOSTI / GRESKE ################################################
+
+#Postoji jedan red u test skupu gde je godina izgranje garaze 2207. Ocigledno je da je doslo do greske.  
+#Takode, ta kuca je izgradena 2006, a renovirana 2007. godine, pa cemo zameniti tu vrednost.
+
+data$GarageYrBlt[data$GarageYrBlt==2207] <- 2007
+
+# View(data %>% filter(data$YrSold - data$YearRemodAdd < 0))
+# postoje dva reda gde je YearRemodAdd nakon YrSold
+# zamenicemo YearRemodAdd sa YearBuilt
+data$YearRemodAdd[data$YearRemodAdd > data$YrSold] <- data$YearBuilt[data$YearRemodAdd > data$YrSold]
+
+#Mogu se uociti dva reda gde je HouseAge manji od 0, sto znaci da je kuca prodata pre nego sto je izgradena,
+#odnosno da je doslo do greske.  
+#Obrisacemo ta dva reda. Takode, postoji red gde je YearBuilt > YearRemodAdd.
+
+data <- data %>% 
+  filter(YrSold - YearBuilt >= 0)
+data <- data %>% 
+  filter(YearBuilt <= YearRemodAdd)
+
+### TRAIN TEST SPLIT ###########################################################
+
+set.seed(123)
+train_idx = sample(seq_len(nrow(data)), size = 0.8 * nrow(data))
+
 data.train = data[train_idx, ]
 data.test = data[-train_idx, ]
-#data <- data[1:nrow(data), ]
-#data.test  <- data[(nrow(data)+1):nrow(data), ] 
 
-# data.test$SalePrice <- NULL
+### OUTLIERI ###################################################################
 
-summary(data)
-# -----------------------------------------------------
+# plotovanje svih numerickih karakteristika
+
+ggplot(data.train, aes(x = as.factor(MSSubClass), y = SalePrice)) +
+  geom_boxplot(fill = "skyblue") +
+  scale_y_continuous(labels = comma) +
+  labs(
+    title = "Distribucija SalePrice po MSSubClass",
+    x = "MSSubClass",
+    y = "SalePrice"
+  ) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+
+ggplot(data.train, aes(x = LotFrontage, y = SalePrice)) + geom_point()
+data.train %>% filter(LotFrontage > 300) %>% select(Order)
+# 1499, 1266
+
+ggplot(data.train, aes(x = LotArea, y = SalePrice)) + geom_point()
+data.train %>% filter(LotArea > 100000) %>% select(Order)
+# 2072, 1571, 957, 2116
+
+ggplot(data.train, aes(x = as.factor(OverallQual), y = SalePrice)) +
+  geom_boxplot(fill = "skyblue") +
+  scale_y_continuous(labels = comma) +
+  labs(
+    title = "Distribucija SalePrice po OverallQual",
+    x = "OverallQual",
+    y = "SalePrice"
+  ) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+data.train %>% filter(OverallQual == 10 & SalePrice < 200000) %>% select(Order)
+# 1499, 2181
+
+ggplot(data.train, aes(x = as.factor(OverallCond), y = SalePrice)) +
+  geom_boxplot(fill = "skyblue") +
+  scale_y_continuous(labels = comma) +
+  labs(
+    title = "Distribucija SalePrice po OverallCond",
+    x = "OverallCond",
+    y = "SalePrice"
+  ) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+data.train %>% filter(OverallCond == 6 & SalePrice > 600000) %>% select(Order)
+# 1768
+data.train %>% filter(OverallCond == 2 & SalePrice > 300000) %>% select(Order)
+# 18
+data.train %>% filter(OverallCond == 5 & SalePrice > 700000) %>% select(Order)
+# 1761
+
+ggplot(data.train, aes(x = YearBuilt, y = SalePrice)) + geom_point()
+data.train %>% filter(YearBuilt < 1900 & SalePrice > 400000) %>% select(Order)
+# 2667
+
+ggplot(data.train, aes(x = YearRemodAdd, y = SalePrice)) + geom_point()
+data.train %>% filter(YearRemodAdd < 1970 & SalePrice > 300000) %>% select(Order)
+# 957
+
+ggplot(data.train, aes(x = MasVnrArea, y = SalePrice)) + geom_point()
+
+ggplot(data.train, aes(x = BsmtFinSF1, y = SalePrice)) + geom_point()
+data.train %>% filter(BsmtFinSF1 > 4000) %>% select(Order)
+# 1499
+
+ggplot(data.train, aes(x = BsmtFinSF2, y = SalePrice)) + geom_point()
+data.train %>% filter(BsmtFinSF2 > 500 & SalePrice > 500000) %>% select(Order)
+# 424
+
+ggplot(data.train, aes(x = BsmtUnfSF, y = SalePrice)) + geom_point()
+
+ggplot(data.train, aes(x = TotalBsmtSF, y = SalePrice)) + geom_point()
+data.train %>% filter(TotalBsmtSF > 6000) %>% select(Order)
+# 1499
+
+ggplot(data.train, aes(x = X1stFlrSF, y = SalePrice)) + geom_point()
+data.train %>% filter(X1stFlrSF > 4500) %>% select(Order)
+# 1499
+
+ggplot(data.train, aes(x = X2ndFlrSF, y = SalePrice)) + geom_point()
+
+ggplot(data.train, aes(x = LowQualFinSF, y = SalePrice)) + geom_point()
+data.train %>% filter(LowQualFinSF > 500 & SalePrice > 400000) %>% select(Order)
+# 2667
+
+ggplot(data.train, aes(x = GrLivArea, y = SalePrice)) + geom_point()
+data.train %>% filter(GrLivArea > 4500) %>% select(Order)
+# 1499, 2181
+
+ggplot(data.train, aes(x = as.factor(BsmtFullBath), y = SalePrice)) +
+  geom_boxplot(fill = "skyblue") +
+  scale_y_continuous(labels = comma) +
+  labs(
+    title = "Distribucija SalePrice po BsmtFullBath",
+    x = "BsmtFullBath",
+    y = "SalePrice"
+  ) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+
+ggplot(data.train, aes(x = as.factor(BsmtHalfBath), y = SalePrice)) +
+  geom_boxplot(fill = "skyblue") +
+  scale_y_continuous(labels = comma) +
+  labs(
+    title = "Distribucija SalePrice po BsmtHalfBath",
+    x = "BsmtHalfBath",
+    y = "SalePrice"
+  ) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+data.train %>% filter(BsmtHalfBath == 2) %>% select(Order)
+# View(data.train %>% filter(BsmtHalfBath == 2))
+# 1734, 2821, 2499
+data.train %>% filter(BsmtHalfBath == 1 & SalePrice > 700000) %>% select(Order)
+# 1768
+
+ggplot(data.train, aes(x = as.factor(FullBath), y = SalePrice)) +
+  geom_boxplot(fill = "skyblue") +
+  scale_y_continuous(labels = comma) +
+  labs(
+    title = "Distribucija SalePrice po FullBath",
+    x = "FullBath",
+    y = "SalePrice"
+  ) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+
+ggplot(data.train, aes(x = as.factor(HalfBath), y = SalePrice)) +
+  geom_boxplot(fill = "skyblue") +
+  scale_y_continuous(labels = comma) +
+  labs(
+    title = "Distribucija SalePrice po HalfBath",
+    x = "HalfBath",
+    y = "SalePrice"
+  ) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+
+ggplot(data.train, aes(x = as.factor(BedroomAbvGr), y = SalePrice)) +
+  geom_boxplot(fill = "skyblue") +
+  scale_y_continuous(labels = comma) +
+  labs(
+    title = "Distribucija SalePrice po BedroomAbvGr",
+    x = "BedroomAbvGr",
+    y = "SalePrice"
+  ) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+data.train %>% filter(BedroomAbvGr == 8) %>% select(Order)
+# 2195
+
+ggplot(data.train, aes(x = as.factor(KitchenAbvGr), y = SalePrice)) +
+  geom_boxplot(fill = "skyblue") +
+  scale_y_continuous(labels = comma) +
+  labs(
+    title = "Distribucija SalePrice po KitchenAbvGr",
+    x = "KitchenAbvGr",
+    y = "SalePrice"
+  ) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+data.train %>% filter(KitchenAbvGr == 3) %>% select(Order)
+# 713, 716
+data.train %>% filter(KitchenAbvGr == 0) %>% select(Order)
+# 2821, 2254 
+
+ggplot(data.train, aes(x = as.factor(TotRmsAbvGrd), y = SalePrice)) +
+  geom_boxplot(fill = "skyblue") +
+  scale_y_continuous(labels = comma) +
+  labs(
+    title = "Distribucija SalePrice po TotRmsAbvGrd",
+    x = "TotRmsAbvGrd",
+    y = "SalePrice"
+  ) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+data.train %>% filter(TotRmsAbvGrd > 12) %>% select(Order)
+# 2195
+
+ggplot(data.train, aes(x = as.factor(Fireplaces), y = SalePrice)) +
+  geom_boxplot(fill = "skyblue") +
+  scale_y_continuous(labels = comma) +
+  labs(
+    title = "Distribucija SalePrice po Fireplaces",
+    x = "Fireplaces",
+    y = "SalePrice"
+  ) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+data.train %>% filter(Fireplaces == 4) %>% select(Order)
+# 2499
+
+ggplot(data.train %>% filter(GarageYrBlt > 0), aes(x = GarageYrBlt, y = SalePrice)) + geom_point()
+
+ggplot(data.train, aes(x = as.factor(GarageCars), y = SalePrice)) +
+  geom_boxplot(fill = "skyblue") +
+  scale_y_continuous(labels = comma) +
+  labs(
+    title = "Distribucija SalePrice po GarageCars",
+    x = "GarageCars",
+    y = "SalePrice"
+  ) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+data.train %>% filter(GarageCars == 5) %>% select(Order)
+# 747
+
+ggplot(data.train, aes(x = GarageArea, y = SalePrice)) + geom_point()
+
+ggplot(data.train, aes(x = WoodDeckSF, y = SalePrice)) + geom_point()
+data.train %>% filter(WoodDeckSF > 1000) %>% select(Order)
+# 2294
+
+ggplot(data.train, aes(x = OpenPorchSF, y = SalePrice)) + geom_point()
+data.train %>% filter(OpenPorchSF > 520) %>% select(Order)
+# 2066, 727
+
+ggplot(data.train, aes(x = EnclosedPorch, y = SalePrice)) + geom_point()
+data.train %>% filter(EnclosedPorch > 1000) %>% select(Order)
+# 2090
+
+ggplot(data.train, aes(x = X3SsnPorch, y = SalePrice)) + geom_point()
+
+ggplot(data.train, aes(x = ScreenPorch, y = SalePrice)) + geom_point()
+
+ggplot(data.train, aes(x = PoolArea, y = SalePrice)) + geom_point()
+
+values = c(1499, 1266, 2072, 1571, 957, 2116, 2181, 1734, 2499, 1768, 18,
+           1761, 2667, 2821, 2195, 713, 716, 2254, 926, 747, 2294, 2066, 727, 2090)
+
+nrow(data.train)
+data.train <- data.train %>%
+  filter(!(Order %in% values)) # izbacili smo outliere
+nrow(data.train)
+
+
+
+### EDA ########################################################################
 
 # odabir znacajnih atributa za EDA
 
@@ -589,7 +676,7 @@ ggplot(data.train, aes(x = LotArea, y = SalePrice)) +
 
 ###
 
-ggplot(data, aes(x = YearBuilt, y = SalePrice)) +
+ggplot(data.train, aes(x = YearBuilt, y = SalePrice)) +
   geom_point(alpha = 0.7) +
   scale_x_continuous(labels = comma) +
   scale_y_continuous(labels = comma) +
@@ -600,7 +687,7 @@ ggplot(data, aes(x = YearBuilt, y = SalePrice)) +
   ) +
   theme(plot.title = element_text(hjust = 0.5, face = "bold"))
 
-ggplot(data, aes(x = YearRemodAdd, y = SalePrice)) +
+ggplot(data.train, aes(x = YearRemodAdd, y = SalePrice)) +
   geom_point(alpha = 0.7) +
   scale_x_continuous(labels = comma) +
   scale_y_continuous(labels = comma) +
@@ -613,7 +700,7 @@ ggplot(data, aes(x = YearRemodAdd, y = SalePrice)) +
 
 ###
 
-ggplot(data, aes(x = as.factor(OverallQual), y = SalePrice)) +
+ggplot(data.train, aes(x = as.factor(OverallQual), y = SalePrice)) +
   geom_boxplot() +
   scale_y_continuous(labels = comma) +
   labs(
@@ -623,7 +710,7 @@ ggplot(data, aes(x = as.factor(OverallQual), y = SalePrice)) +
   ) +
   theme(plot.title = element_text(hjust = 0.5, face = "bold"))
 
-ggplot(data, aes(x = as.factor(OverallCond), y = SalePrice)) +
+ggplot(data.train, aes(x = as.factor(OverallCond), y = SalePrice)) +
   geom_boxplot() +
   scale_y_continuous(labels = comma) +
   labs(
@@ -633,7 +720,7 @@ ggplot(data, aes(x = as.factor(OverallCond), y = SalePrice)) +
   ) +
   theme(plot.title = element_text(hjust = 0.5, face = "bold"))
 
-ggplot(data, aes(x = as.factor(KitchenQual), y = SalePrice)) +
+ggplot(data.train, aes(x = as.factor(KitchenQual), y = SalePrice)) +
   geom_boxplot() +
   scale_y_continuous(labels = comma) +
   labs(
@@ -645,19 +732,21 @@ ggplot(data, aes(x = as.factor(KitchenQual), y = SalePrice)) +
 
 ###
 
-ggplot(data, aes(x = as.factor(Neighborhood), y = SalePrice)) +
-  geom_boxplot() +
-  scale_y_continuous(labels = comma) +
+ggplot(data.train, aes(x = Neighborhood, y = SalePrice)) +
+  geom_boxplot(fill = "lightblue") +
+  scale_y_continuous(labels = scales::comma) +
   labs(
     title = "Odnos Neighborhood i SalePrice",
     x = "Neighborhood",
     y = "SalePrice"
   ) +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+  theme_minimal() +
+  theme( plot.title = element_text(
+    hjust = 0.5, face ="bold"),    axis.text.x = element_text(angle = 45, hjust = 1))
 
 ###
 
-ggplot(data, aes(x = as.factor(GarageCars), y = SalePrice)) +
+ggplot(data.train, aes(x = as.factor(GarageCars), y = SalePrice)) +
   geom_boxplot() +
   scale_y_continuous(labels = comma) +
   labs(
@@ -667,7 +756,7 @@ ggplot(data, aes(x = as.factor(GarageCars), y = SalePrice)) +
   ) +
   theme(plot.title = element_text(hjust = 0.5, face = "bold"))
 
-ggplot(data, aes(x = as.factor(Fireplaces), y = SalePrice)) +
+ggplot(data.train, aes(x = as.factor(Fireplaces), y = SalePrice)) +
   geom_boxplot() +
   scale_y_continuous(labels = comma) +
   labs(
@@ -677,7 +766,7 @@ ggplot(data, aes(x = as.factor(Fireplaces), y = SalePrice)) +
   ) +
   theme(plot.title = element_text(hjust = 0.5, face = "bold"))
 
-ggplot(data, aes(x = as.factor(FullBath), y = SalePrice)) +
+ggplot(data.train, aes(x = as.factor(FullBath), y = SalePrice)) +
   geom_boxplot() +
   scale_y_continuous(labels = comma) +
   labs(
@@ -687,15 +776,17 @@ ggplot(data, aes(x = as.factor(FullBath), y = SalePrice)) +
   ) +
   theme(plot.title = element_text(hjust = 0.5, face = "bold"))
 
+ggplot(data, aes(x = as.factor(HouseStyle), y = SalePrice)) +
+  geom_boxplot() +
+  scale_y_continuous(labels = comma) +
+  labs(
+    title = "Odnos HouseStyle i SalePrice",
+    x = "HouseStyle",
+    y = "SalePrice"
+  ) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+
 # 2. koristimo koeficijente korelacije za numericke atribute
-# cor() funkcija
-# OverallQual → 0.79
-# GrLivArea → 0.71
-# GarageCars → 0.64
-# GarageArea → 0.62
-# TotalBsmtSF → 0.61
-# 1stFlrSF → 0.60
-# FullBath → 0.56
 
 numeric_data <- data[sapply(data, is.numeric)]
 cor_matrix <- cor(numeric_data, use = "pairwise.complete.obs")
@@ -703,21 +794,18 @@ cor_with_saleprice <- cor_matrix[, "SalePrice"]
 cor_with_saleprice <- sort(cor_with_saleprice, decreasing = TRUE)
 print(cor_with_saleprice)
 
-# Convert to dataframe for ggplot
 cor_df <- data.frame(
   Variable = names(cor_with_saleprice),
   Correlation = cor_with_saleprice
 )
 
-# Remove SalePrice itself
 cor_df <- cor_df[cor_df$Variable != "SalePrice", ]
 
-# Plot
 ggplot(cor_df, aes(x = reorder(Variable, Correlation), y = Correlation)) +
   geom_col(fill = "steelblue") +
   coord_flip() +
-  labs(title = "Correlation of Numeric Features with SalePrice",
-       x = "Variable", y = "Correlation Coefficient")
+  labs(title = "Korelacija numerickih atributa sa SalePrice",
+       x = "Atribut", y = "Koeficijent korelacije")
 
 ggplot(data, aes(x = X1stFlrSF, y = SalePrice)) +
   geom_point(alpha = 0.7) +
@@ -740,110 +828,32 @@ ggplot(data, aes(x = as.factor(TotRmsAbvGrd), y = SalePrice)) +
   ) +
   theme(plot.title = element_text(hjust = 0.5, face = "bold"))
 
-ggplot(data, aes(x = LotFrontage, y = SalePrice)) +
-  geom_point(alpha = 0.7) +
-  scale_x_continuous(labels = comma) +
-  scale_y_continuous(labels = comma) +
-  labs(
-    title = "Odnos LotFrontage i SalePrice",
-    x = "LotFrontage",
-    y = "SalePrice"
-  ) +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
-
-# 3. koristimo boxplotove i violin plotove za kategorijske atribute
-# Neighborhood, HouseStyle, OverallQual
-# za ordinalne atribute moze se koristiti Spearman's rank correlation
-# inace Pearson
-
-ggplot(data, aes(x = as.factor(Neighborhood), y = SalePrice)) +
-  geom_boxplot() +
-  scale_y_continuous(labels = comma) +
-  labs(
-    title = "Odnos Neighborhood i SalePrice",
-    x = "Neighborhood",
-    y = "SalePrice"
-  ) +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
-
-ggplot(data, aes(x = as.factor(HouseStyle), y = SalePrice)) +
-  geom_boxplot() +
-  scale_y_continuous(labels = comma) +
-  labs(
-    title = "Odnos HouseStyle i SalePrice",
-    x = "HouseStyle",
-    y = "SalePrice"
-  ) +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
-
-ggplot(data, aes(x = as.factor(OverallQual), y = SalePrice)) +
-  geom_boxplot() +
-  scale_y_continuous(labels = comma) +
-  labs(
-    title = "Odnos OverallQual i SalePrice",
-    x = "OverallQual",
-    y = "SalePrice"
-  ) +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
-
-# 4. proveravamo multikolinearnost
+# 3. proveravamo multikolinearnost
 # GarageArea i GarageCars
 # GrLivArea i 1stFlrSF
 # TotalBsmtSF i BsmtFinSF1
 # proveriti pomocu korelacione matrice ili Variance Inflation Factor (VIF)
 # zadrzati samo jednu reprezentativnu promenljivu
 
-# Select numeric columns
-numeric_vars <- data[sapply(data, is.numeric)]
+numeric_vars <- data.train[sapply(data.train, is.numeric)]
 
-# Compute correlation matrix
 corr_matrix <- cor(numeric_vars, use = "pairwise.complete.obs", method = "pearson")
-
-# Set the correlation threshold
 threshold <- 0.8
-
-# Get the upper triangle of the matrix to avoid duplicates
 corr_matrix[lower.tri(corr_matrix, diag = TRUE)] <- NA
 
-# Convert to a long-format table
 corr_table <- as.data.frame(as.table(corr_matrix))
 
-# Filter by absolute correlation greater than threshold
 high_corr <- subset(corr_table, !is.na(Freq) & abs(Freq) > threshold)
-
-# Sort descending by correlation
 high_corr <- high_corr[order(-abs(high_corr$Freq)), ]
-
-# Round for readability
 high_corr$Freq <- round(high_corr$Freq, 3)
-
-# View results
 high_corr
-
-# GarageCars   GarageArea 0.886
-# GrLivArea TotRmsAbvGrd 0.833
-# TotalBsmtSF    X1stFlrSF 0.804
-# OverallQual    SalePrice 0.801
 
 # dropujemo jednu, zadrzavamo jednu (ako ih uopste koristimo za modele)
 
-# -----------------------------------------------------
-
-na_columns
-
-# GarageYrBlt - Fill with 0 -1 or YearBuilt ?
-
-# pretvoriti sve chr u kategorijske TODO
-
-
-# uticajne kolone:
-# overallQual, TotalBsmtSF, X1stFlrSF, GrLivArea, FullBath, TotRmsAbvGrd, 
-# GarageCars i GarageArea (koje su zajedno u korelaciji pa cemo da izbacimo jednu od te dve)
 
 
 ### Feature engineering ########################################################
 
-# data.test$SalePrice <- NA
 data <- rbind(data.train, data.test)
 
 table(data$YrSold)
@@ -863,8 +873,7 @@ ggplot(data = data[!is.na(data$SalePrice),], aes(x = TotalSF, y = SalePrice)) +
 # Postoji jaka korelacija 
 
 
-data$TotalFinishedSF <- data$GrLivArea + data$BsmtFinSF1 +
-  data$BsmtFinSF2
+data$TotalFinishedSF <- data$GrLivArea + data$BsmtFinSF1 + data$BsmtFinSF2
 
 ggplot(data = data[!is.na(data$SalePrice),], aes(x = TotalFinishedSF, y = SalePrice)) +
   geom_point(col = 'blue') +
@@ -875,12 +884,6 @@ ggplot(data = data[!is.na(data$SalePrice),], aes(x = TotalFinishedSF, y = SalePr
 # Postoji jaka korelacija
 
 data$HouseAge <- data$YrSold - data$YearBuilt
-
-
-View(data %>% filter(HouseRemodAge < 0))
-# postoje dva reda gde je YearRemodAdd nakon YrSold
-# zamenicemo YearRemodAdd sa YearBuilt
-data$YearRemodAdd[data$YearRemodAdd > data$YrSold] <- data$YearBuilt[data$YearRemodAdd > data$YrSold]
 
 data$HouseRemodAge <- data$YrSold - data$YearRemodAdd
 
@@ -1043,39 +1046,30 @@ ggplot(data, aes(x = HasPool, y = SalePrice)) +
   theme(plot.title = element_text(hjust = 0.5, face = "bold"))
 
 
-
-#Mogu se uociti dva reda gde je HouseAge manji od 0, sto znaci da je kuca prodata pre nego sto je izgradena, odnosno da je doslo do greske.  
-#Obrisacemo ta dva reda. Takode, postoji red gde je YearBuilt > YearRemodAdd.
-
-data <- data %>% 
-  filter(HouseAge >= 0)
-data <- data %>% 
-  filter(YearBuilt <= YearRemodAdd)
-
-
-
 data.train = data[train_idx, ]
+
+nrow(data.train)
+data.train = drop_na(data.train)
+nrow(data.train)
+
 data.test = data[-train_idx, ]
-#data <- data[1:nrow(data), ]
-#data.test  <- data[(nrow(data)+1):nrow(data), ] 
 
-# data.test$SalePrice <- NULL
+nrow(data.test)
+data.train = drop_na(data.train)
+nrow(data.test)
 
 
-### Implementacija i procena modela ############################################
 
-# Load necessary libraries
+### IMPLEMENTACIJA I PROCENA MODELA ############################################
+
 library(tidyverse)
-library(caret)       # for modeling and evaluation
-library(car)         # for VIF if needed
-library(glmnet)      # for Ridge and Lasso regression
+library(caret)
+library(car)
+library(glmnet)
 library(Metrics)
 
 str(data)
 summary(data$SalePrice)
-
-# model_data <- data %>%
-#   select(SalePrice, OverallQual, GrLivArea, GarageCars, TotalBsmtSF, YearBuilt)
 
 numeric_data <- data[sapply(data, is.numeric)]
 
@@ -1086,121 +1080,134 @@ print(cor_with_saleprice)
 
 # proveravamo simetricnost vrednosti atributa SalePrice
 
-hist(data$SalePrice)
+hist(data.train$SalePrice)
 
-data = data %>% mutate(SalePrice = log10(SalePrice))
+data.train = data.train %>% mutate(SalePrice = log1p(SalePrice))
 
-hist(data$SalePrice)
+hist(data.train$SalePrice)
+
+# primecujemo neke vrednosti iza 10
+# da proverimo sta se tu radi
+
+data.train %>% filter(SalePrice < 10) %>% select(Order, SalePrice)
+data.train = data.train %>% filter(SalePrice >= 10)
+
+hist(data.train$SalePrice)
 
 # koristimo metod forward selection za konstruisanje modela linearne regresije
 
-model1 = lm(SalePrice ~ TotalSF, data = data) # atribut sa najboljom korelacijom
+model1 = lm(SalePrice ~ TotalSF, data = data.train) # atribut sa najboljom korelacijom
 summary(model1)
 
 plot(data$TotalSF, data$SalePrice)
 
-model2 = lm(SalePrice ~ TotalSF + OverallQual, data = data) # atribut sa drugom najboljom korelacijom
+model2 = lm(SalePrice ~ TotalSF + OverallQual, data = data.train) # atribut sa drugom najboljom korelacijom
 summary(model2)
 
-plot(data$OverallQual, data$SalePrice)
+plot(data.train$OverallQual, data.train$SalePrice)
 
 # gledamo korelaciju izmedju atributa da bismo izbegli dodavanje atributa
 # koji bi prouzrokovali multikoliearnost
 
-cor(data$TotalSF, data$TotalFinishedSF)
-cor(data$OverallQual, data$TotalFinishedSF)
-cor(data$TotalSF, data$GrLivArea)
+cor(data.train$TotalSF, data.train$TotalFinishedSF)
+cor(data.train$OverallQual, data.train$TotalFinishedSF)
+cor(data.train$TotalSF, data.train$GrLivArea)
 
-cor(data$TotalSF, data$GarageCars)
-cor(data$OverallQual, data$GarageCars)
+cor(data.train$TotalSF, data.train$GarageCars)
+cor(data.train$OverallQual, data.train$GarageCars)
 
-model3 = lm(SalePrice ~ TotalSF + OverallQual + GarageCars, data = data)
+model3 = lm(SalePrice ~ TotalSF + OverallQual + GarageCars, data = data.train)
 summary(model3)
 
-plot(data$GarageCars, data$SalePrice)
+plot(data.train$GarageCars, data.train$SalePrice)
 
-model4 = lm(SalePrice ~ TotalSF + OverallQual + GarageCars + TotalBaths, data = data)
+model4 = lm(SalePrice ~ TotalSF + OverallQual + GarageCars + TotalBaths, data = data.train)
 summary(model4)
 
 vif(model4) # vidimo da nema multikolinearnosti (vif < 5)
 
 # mozemo da nastavimo sa dodavanjem
 
-model5 = lm(SalePrice ~ TotalSF + OverallQual + GarageCars + TotalBaths + HouseAge, data = data)
+model5 = lm(SalePrice ~ TotalSF + OverallQual + GarageCars + TotalBaths + HouseAge, data = data.train)
 summary(model5)
 
 vif(model5) # vidimo da nema multikolinearnosti (vif < 5)
 
 # sada da ubacimo neku kategorijsku promenljivu
 
-model6 = lm(SalePrice ~ TotalSF + OverallQual + GarageCars + TotalBaths + HouseAge + Neighborhood, data = data)
+model6 = lm(SalePrice ~ TotalSF + OverallQual + GarageCars + TotalBaths + HouseAge + 
+              Neighborhood, data = data.train)
 summary(model6)
 
-model7 = lm(SalePrice ~ TotalSF + OverallQual + GarageCars + TotalBaths + HouseAge + Neighborhood + TotRmsAbvGrd, data = data)
+model7 = lm(SalePrice ~ TotalSF + OverallQual + GarageCars + TotalBaths + HouseAge + 
+              Neighborhood + TotRmsAbvGrd, data = data.train)
 summary(model7)
 
 vif(model7)
 
-cor(data$TotalSF, data$TotRmsAbvGrd)
+cor(data.train$TotalSF, data.train$TotRmsAbvGrd)
 
-plot(data$TotRmsAbvGrd, data$TotalSF)
+plot(data.train$TotRmsAbvGrd, data.train$TotalSF)
 
-model8 = lm(SalePrice ~ TotalSF * TotRmsAbvGrd + OverallQual + GarageCars + TotalBaths + HouseAge + Neighborhood, data = data)
+model8 = lm(SalePrice ~ TotalSF * TotRmsAbvGrd + OverallQual + GarageCars + TotalBaths + HouseAge
+            + Neighborhood, data = data.train)
 summary(model8)
 
 # ipak cemo da izbacimo TotRmsAbvGrd
 
-model9 = lm(SalePrice ~ TotalSF + OverallQual + GarageCars + TotalBaths + HouseAge + Neighborhood + KitchenQual, data = data)
+model9 = lm(SalePrice ~ TotalSF + OverallQual + GarageCars + TotalBaths + HouseAge + Neighborhood + 
+              KitchenQual, data = data.train)
 summary(model9)
 
 vif(model9)
 
-model10 = lm(SalePrice ~ TotalSF + OverallQual + GarageCars + TotalBaths + HouseAge + Neighborhood + KitchenQual + Fireplaces, data = data)
+model10 = lm(SalePrice ~ TotalSF + OverallQual + GarageCars + TotalBaths + HouseAge + Neighborhood + 
+               KitchenQual + Fireplaces, data = data.train)
 summary(model10)
 
 vif(model10)
 
-model11 = lm(SalePrice ~ TotalSF + OverallQual + GarageCars + TotalBaths + HouseAge + IsNew + Neighborhood + KitchenQual + Fireplaces, data = data)
+model11 = lm(SalePrice ~ TotalSF * OverallQual + GarageCars + TotalBaths + HouseAge + HasGarage + 
+               Neighborhood + KitchenQual + Fireplaces, data = data.train)
 summary(model11)
-
+vif(model11)
 
 ## Ridge i Lasso
 
-x_train <- model.matrix(SalePrice ~ ., data = data)[, -1]
-y_train <- data$SalePrice
+x_train <- model.matrix(SalePrice ~ ., data = data.train)[, -1]
+y_train <- data.train$SalePrice
 
 ###############
 
 for (col in names(data.test)) {
-  if (is.factor(data[[col]])) {
-    data.test[[col]] <- factor(data.test[[col]], levels = levels(data[[col]]))
+  if (is.factor(data.train[[col]])) {
+    data.test[[col]] <- factor(data.test[[col]], levels = levels(data.train[[col]]))
   }
 }
 
 x_test <- model.matrix(~ ., data = data.test)[, -1]
-x_test <- x_test[, colnames(x_train)]   # align columns with training matrix
+x_test <- x_test[, colnames(x_train)]
+y_test <- data.test$SalePrice
 
-# 4. Fit Ridge model with cross-validation
 set.seed(123)
-ridge_cv <- cv.glmnet(x_train, y_train, alpha = 0)   # alpha = 0 → Ridge regression
-lasso_cv <- cv.glmnet(x_train, y_train, alpha = 1)   # alpha = 0 → Lasso regression
+ridge_cv <- cv.glmnet(x_train, y_train, alpha = 0)
+lasso_cv <- cv.glmnet(x_train, y_train, alpha = 1)
 
-# 5. Best lambda
 ridge_cv$lambda.min
 lasso_cv$lambda.min
 
-# 6. Predict on test data
-ridge_preds = predict(ridge_cv, newx = x_test, s = "lambda.min")
-lasso_preds = predict(lasso_cv, newx = x_test, s = "lambda.min")
+ridge_preds = expm1(predict(ridge_cv, newx = x_test, s = "lambda.min"))
+lasso_preds = expm1(predict(lasso_cv, newx = x_test, s = "lambda.min"))
+# model11_preds <- expm1(predict(model11, newdata = data.test))
 
-# 7. (Optional) Evaluate on train set to check fit
-train_preds_ridge = predict(ridge_cv, newx = x_train, s = "lambda.min")
-train_preds_lasso = predict(lasso_cv, newx = x_train, s = "lambda.min")
-train_preds_model11 = predict(model11, newdata = data)
+rmse(y_test, ridge_preds)
+mae(y_test, ridge_preds)
 
-sqrt(mean((y_train - train_preds_ridge)^2))  # Ridge RMSE on training set
-sqrt(mean((y_train - train_preds_lasso)^2))  # Lasso RMSE on training set
-sqrt(mean((data$SalePrice - train_preds_model11)^2))  # Model11 RMSE on training set
+rmse(y_test, lasso_preds)
+mae(y_test, lasso_preds)
+
+# rmse(y_test, model11_preds)
+# mae(y_test, model11_preds)
 
 ###############
 
@@ -1208,15 +1215,13 @@ sqrt(mean((data$SalePrice - train_preds_model11)^2))  # Model11 RMSE on training
 
 library(randomForest)
 
-# Convert categorical variables to numeric
 dummies <- dummyVars(~ ., data = data[, !names(data) %in% "SalePrice"])
 data.num <- data.frame(predict(dummies, newdata = data))
 data.num$SalePrice <- data$SalePrice
 
 data.test.num <- data.frame(predict(dummies, newdata = data.test))
 
-# Fit Random Forest
-rf_model <- randomForest(SalePrice ~ ., data = data.num, ntree = 500, mtry = 10, importance = TRUE)
+rf_model <- randomForest(SalePrice ~ ., data = data.num, ntree = 50, mtry = 10, importance = TRUE)
 rf_model
 # varImpPlot(rf_model)
 
@@ -1234,11 +1239,9 @@ train_data_num$SalePrice <- train_data$SalePrice
 
 val_data_num <- data.frame(predict(dummies, newdata = val_data))
 
-# Training matrix
 train_matrix <- as.matrix(train_data_num[, !names(train_data_num) %in% "SalePrice"])
 train_label  <- train_data_num$SalePrice
 
-# Test matrix
 val_matrix <- as.matrix(val_data_num)
 val_label  <- val_data$SalePrice
 
@@ -1250,19 +1253,22 @@ rmse_score = rmse(val_data$SalePrice, pred_xgb)
 mae_score = mae(val_data$SalePrice, pred_xgb)
 
 rmse_score
+mae_score
 
 ## Support Vector Regression (SVR)
 
 library(e1071)
 
-svr_model = svm(SalePrice ~ ., data = data)
+svr_model = svm(SalePrice ~ ., data = data.train)
 pred_svr = predict(svr_model, newdata = data.test)
+
+rmse(data.test$SalePrice, pred_svr)
+mae(data.test$SalePrice, pred_svr)
 
 ## Neural Networks (ANNs)
 
 library(neuralnet)
 
 nn_model = neuralnet(SalePrice ~ OverallQual + GrLivArea + GarageCars + TotalBaths,
-                     data = data, hidden = c(5, 3))
+                     data = data.train, hidden = c(5, 3))
 plot(nn_model)
-
