@@ -1214,15 +1214,19 @@ mae(y_test, lasso_preds)
 
 library(randomForest)
 
-dummies <- dummyVars(~ ., data = data[, !names(data) %in% "SalePrice"])
-data.num <- data.frame(predict(dummies, newdata = data))
-data.num$SalePrice <- data$SalePrice
+dummies <- dummyVars(~ ., data = data.train[, !names(data.train) %in% "SalePrice"])
+
+data.train.num <- data.frame(predict(dummies, newdata = data.train))
+data.train.num$SalePrice <- data.train$SalePrice
 
 data.test.num <- data.frame(predict(dummies, newdata = data.test))
 
-rf_model <- randomForest(SalePrice ~ ., data = data.num, ntree = 50, mtry = 10, importance = TRUE)
-rf_model
-# varImpPlot(rf_model)
+rf_model <- randomForest(SalePrice ~ ., data = data.train.num, ntree = 50, mtry = 10, importance = TRUE)
+
+rf_preds <- expm1(predict(rf_model, newdata = data.test.num))
+
+rmse(data.test$SalePrice, rf_preds)
+mae(data.test$SalePrice, rf_preds)
 
 ## XGBoost
 
@@ -1248,11 +1252,8 @@ xgb_model = xgboost(data = train_matrix, label = train_label, nrounds = 100, obj
 
 pred_xgb = predict(xgb_model, newdata = val_matrix)
 
-rmse_score = rmse(val_data$SalePrice, pred_xgb)
-mae_score = mae(val_data$SalePrice, pred_xgb)
-
-rmse_score
-mae_score
+rmse(val_data$SalePrice, pred_xgb)
+mae(val_data$SalePrice, pred_xgb)
 
 ## Support Vector Regression (SVR)
 
@@ -1268,6 +1269,21 @@ mae(data.test$SalePrice, pred_svr)
 
 library(neuralnet)
 
-nn_model = neuralnet(SalePrice ~ OverallQual + GrLivArea + GarageCars + TotalBaths,
-                     data = data.train, hidden = c(5, 3))
-plot(nn_model)
+dummies <- dummyVars(~ TotalSF + OverallQual + GarageCars + TotalBaths +
+                       HouseAge + HasGarage + Neighborhood + KitchenQual + Fireplaces,
+                     data = data.train)
+
+train.num <- data.frame(predict(dummies, newdata = data.train))
+train.num$SalePrice <- data.train$SalePrice
+
+test.num <- data.frame(predict(dummies, newdata = data.test))
+
+nn_model = neuralnet(SalePrice ~ .,
+                     data = train.num, hidden = c(10, 5), stepmax = 1e6, linear.output = T)
+# plot(nn_model)
+
+nn_preds <- compute(nn_model, test.num[, names(test.num) != "SalePrice"])
+nn_preds <- expm1(nn_preds$net.result)
+
+rmse(data.test$SalePrice, nn_preds)
+mae(data.test$SalePrice, nn_preds)
