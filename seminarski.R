@@ -176,12 +176,15 @@ nrow(data.train)
 # ----------------------------------------------------
 # NA VREDNOSTI
 
-data.test$SalePrice <- NA
+# data.test$SalePrice <- NA
 
-data <- rbind(data, data.test)
+data <- rbind(data.train, data.test)
 dim(data)
 dim(data.test)
 
+
+
+#------------------------------------------- za novi dataset
 na_columns = sort(colSums(is.na(data))[colSums(is.na(data)) > 0])
 
 na_columns
@@ -197,7 +200,8 @@ unique(data$Electrical)
 tbl <- xtabs(~Electrical, data = data)
 # najcesca vrednost je "SBrkr" - standardni prekidacii i Romex (tip kabla)
 most_common <- names(which.max(tbl))
-data$Electrical[is.na(data$Electrical)] <- most_common
+data$Electrical[data$Electrical == ""] <- most_common # promenjeno
+
 
 # View(data)
 
@@ -206,13 +210,10 @@ data$Electrical[is.na(data$Electrical)] <- most_common
 # takodje ima malo NA 23, pa se moze iskoristiti najcesca vrednost
 str(data$MasVnrType)
 
-#View(data %>%
-#       filter(is.na(MasVnrType) & !is.na(MasVnrArea)))
-# Postoji jedna vrednost gde je MasVnrType NA, a MasVnrArea nije 0, sto ukazuje da je tu doslo do greske
-# uzimamo najcesce vrednosti gde area nije 0
-tbl <- xtabs(~MasVnrType, data = data[data$MasVnrArea != 0, ])
-most_common <- names(which.max(tbl))
-data$MasVnrType[is.na(data$MasVnrType) & data$MasVnrArea != 0] <- most_common
+View(data %>%
+       filter(MasVnrType == ""))
+View(data %>%
+       filter(is.na(MasVnrArea)))
 
 
 tbl <- xtabs(~MasVnrType, data = data)
@@ -222,6 +223,7 @@ data$MasVnrType[is.na(data$MasVnrType)] <- most_common
 
 # MasVnrArea - povrsina zida koji je pokriven dekorativnim materijalom
 # numericka
+# 29 NA
 str(data$MasVnrArea)
 
 shapiro.test(data$MasVnrArea)
@@ -240,46 +242,40 @@ data_median = median(data$MasVnrArea[!is.na(data$MasVnrArea)])
 # medijana je 0
 data$MasVnrArea[is.na(data$MasVnrArea)] <- data_median
 
+
+
 # BsmtQual - visina podruma 
 # kategorijska ORDINALNA - excellent (100+ in), good(90-99 in), ...
 # NA znaci da nema podruma, mozemo dodati novu kategoriju "NONE"
-# ima 81 NA vrednosti
+# ima 79 NA vrednosti
 
-#View(data %>%
-#       filter(is.na(BsmtCond) & TotalBsmtSF > 0))
-# postoje 3 reda gde nema podataka za BsmtCond, a postoje ostali podaci vezani za Bsmt
-tbl <- xtabs(~ BsmtCond, data = data[data$TotalBsmtSF > 0 & !is.na(data$BsmtCond), ])
-most_common <- names(which.max(tbl))
-data$BsmtCond[is.na(data$BsmtCond) & data$TotalBsmtSF > 0] <- most_common
+View(data %>%
+       filter(is.na(BsmtCond) & TotalBsmtSF > 0))
 
 
-#View(data %>%
-#       filter(is.na(BsmtExposure) & TotalBsmtSF > 0))
-# postoje 3 reda gde nema podataka za BsmtExposure, a postoje ostali podaci vezani za Bsmt
-tbl <- xtabs(~ BsmtExposure, data = data[data$TotalBsmtSF > 0 & !is.na(data$BsmtExposure), ])
-most_common <- names(which.max(tbl))
-data$BsmtExposure[is.na(data$BsmtExposure) & data$TotalBsmtSF > 0] <- most_common
+View(data %>%
+       filter(is.na(BsmtExposure) & TotalBsmtSF > 0))
 
+View(data %>%
+       filter(is.na(BsmtFinType2) & TotalBsmtSF > 0))
 
-#View(data %>%
-#       filter(is.na(BsmtFinType2) & TotalBsmtSF > 0))
-# postoje 3 reda gde nema podataka za BsmtFinType2, a postoje ostali podaci vezani za Bsmt
-tbl <- xtabs(~ BsmtFinType2, data = data[data$BsmtFinSF2 > 0 & !is.na(data$BsmtFinType2), ])
-most_common <- names(which.max(tbl))
-data$BsmtFinType2[is.na(data$BsmtFinType2) & data$BsmtFinSF2 > 0] <- most_common
+View(data %>%
+       filter(is.na(BsmtQual) & TotalBsmtSF > 0))
 
-#View(data %>%
-#       filter(is.na(BsmtQual) & TotalBsmtSF > 0))
-# postoje 2 reda gde nema podataka za BsmtQual, a postoje ostali podaci vezani za Bsmt
-tbl <- xtabs(~ BsmtQual, data = data[data$TotalBsmtSF > 0 & !is.na(data$BsmtQual), ])
-most_common <- names(which.max(tbl))
-data$BsmtQual[is.na(data$BsmtQual) & data$TotalBsmtSF > 0] <- most_common
+View(data %>%
+       filter(TotalBsmtSF == 0))
 
 # postoji jedan red gde su BsmtFinSF1, BsmtFinSF2, BsmtUnfSF i TotalBsmtSF NA, tu stavljamo 0
 data$BsmtFinSF1[is.na(data$BsmtFinSF1)] <- 0
 data$BsmtFinSF2[is.na(data$BsmtFinSF2)] <- 0
 data$BsmtUnfSF[is.na(data$BsmtUnfSF)] <- 0
 data$TotalBsmtSF[is.na(data$TotalBsmtSF)] <- 0
+
+data$BsmtQual[data$BsmtQual == ""] <- "NoBasement"
+data$BsmtCond[data$BsmtCond == ""] <- "NoBasement"
+data$BsmtExposure[data$BsmtExposure == ""] <- "NoBasement"
+data$BsmtFinType1[data$BsmtFinType1 == ""] <- "NoBasement"
+data$BsmtFinType2[data$BsmtFinType2 == ""] <- "NoBasement"
 
 # ---------------------------
 #View(data %>%
@@ -321,54 +317,79 @@ data$BsmtFinType2[is.na(data$BsmtFinType2)] <- "NoBasement"
 str(data$BsmtExposure)
 data$BsmtExposure[is.na(data$BsmtExposure)] <- "NoBasement"
 
+# 2 NA za BsmtFullBath i BsmtHalfBath su za redove gde ne postoji Basement
+# tu cemo staviti 0
+#View(data %>%
+#       filter(is.na(BsmtFullBath)))
+
+data$BsmtFullBath[is.na(data$BsmtFullBath)] <- 0
+data$BsmtHalfBath[is.na(data$BsmtHalfBath)] <- 0
+
+
+
+sort(colSums(is.na(data))[colSums(is.na(data)) > 0])
+
+
 # GarageType, GarageYrBlt, GarageFinish, GarageQual, GarageCond
 # kategorijska ORDINALNA
 # NA znaci da ne postoji garaza
 
 
-#Prvo cemo zameniti sve NA vrednosti GarageYrBlt godinom izgradnje kuce.  
 
-data$GarageYrBlt[is.na(data$GarageYrBlt)] <- data$YearBuilt[is.na(data$GarageYrBlt)]
+View(data %>% filter(is.na(GarageYrBlt)))
+View(data)
+
+#data$Garage.Yr.Blt[is.na(data$Garage.Yr.Blt)] <- data$Year.Built[is.na(data$Garage.Yr.Blt)]
+
 
 #Postoji jedan red u test skupu gde je godina izgranje garaze 2207. Ocigledno je da je doslo do greske.  
 #Takode, ta kuca je izgradena 2006, a renovirana 2007. godine, pa cemo zameniti tu vrednost.
 
 data$GarageYrBlt[data$GarageYrBlt==2207] <- 2007
 
-
+View(data[data$Order == 1357 | data$Order == 2237,])
 
 #Postoji jedan red gde je GarageType = "Detachd", a svi ostali podaci o garazi su NA.
 
-data$GarageArea[data$Id == 2577] <- 0
-data$GarageCars[data$Id == 2577] <- 0
-data$GarageType[data$Id == 2577] <- NA
+data$GarageArea[data$Order == 2237] <- 0
+data$GarageCars[data$Order == 2237] <- 0
+data$GarageType[data$Order == 2237] <- NA
+data$GarageQual[data$Order == 2237] <- NA
+data$GarageCond[data$Order == 2237] <- NA
+data$GarageFinish[data$Order == 2237] <- NA
+data$GarageYrBlt[data$Order == 2237] <- -1
 
 #Postoji red gde su prisutni podaci za GarageType, GarageCars i GarageArea, a svi ostali podaci o garazi su NA.
 
 tbl <- xtabs(~ GarageFinish, data = data[!is.na(data$GarageFinish), ])
 most_common_finish <- names(which.max(tbl))
-data$GarageFinish[data$Id == 2127] <- most_common_finish
+data$GarageFinish[data$Order == 1357] <- most_common_finish
 
 tbl <- xtabs(~ GarageQual, data = data[!is.na(data$GarageQual), ])
 most_common_qual <- names(which.max(tbl))
-data$GarageQual[data$Id == 2127] <- most_common_qual
+data$GarageQual[data$Order == 1357] <- most_common_qual
 
 tbl <- xtabs(~ GarageCond, data = data[!is.na(data$GarageCond), ])
 most_common_cond <- names(which.max(tbl))
-data$GarageCond[data$Id == 2127] <- most_common_cond
+data$GarageCond[data$Order == 1357] <- most_common_cond
 
+data$GarageYrBlt[data$Order == 1357] <- data$YearBuilt[data$Order == 1357]
 
 
 data$GarageType[is.na(data$GarageType)] <- "NoGarage"
 data$GarageFinish[is.na(data$GarageFinish)] <- "NoGarage"
 data$GarageQual[is.na(data$GarageQual)] <- "NoGarage"
 data$GarageCond[is.na(data$GarageCond)] <- "NoGarage"
+data$GarageYrBlt[is.na(data$GarageYrBlt)] <- -1
+
+
+sort(colSums(is.na(data))[colSums(is.na(data)) > 0])
 
 
 
 # LotFrontage - duzina placa koja se granici sa ulicom 
 # numericka
-# 481 NA
+# 490 NA
 # Impute by grouping by Neighborhood and taking the median LotFrontage for that group. 
 # This is much better than using the overall median.
 
@@ -378,19 +399,32 @@ str(data$LotFrontage)
 
 # popunjavamo vrednostima medijane za neighbourhood kom pripada
 
+View(data %>% filter(is.na(LotFrontage)))
+View(data)
 
 data <- data %>%
   group_by(Neighborhood) %>%
   mutate(LotFrontage = ifelse(is.na(LotFrontage),
-                              median(LotFrontage, na.rm = TRUE),
-                              LotFrontage))
+                               median(LotFrontage, na.rm = TRUE),
+                               LotFrontage)) %>%
+  ungroup()
+
+
+# tri vrednosti ostaju nepopunjene, jer za su za taj neighborhood svi NA
+# popunicemo ih medijanom celog skupa 
+
+data$LotFrontage[is.na(data$LotFrontage)] <- median(data$LotFrontage, na.rm = TRUE)
 
 data$LotFrontage <- as.integer(data$LotFrontage)
 typeof(data$LotFrontage)
 
+sort(colSums(is.na(data))[colSums(is.na(data)) > 0])
+
+
 # FireplaceQu - kvalitet kamina
 # kat. Ordinalna 
 # NA - nema kamina
+# 1422
 
 data$FireplaceQu[is.na(data$FireplaceQu)] <- "NoFireplace"
 
@@ -433,68 +467,10 @@ ggplot(data, aes(x = PoolQC, y = PoolArea)) +
   ) +
   theme_minimal()
 
-#View(data)
-
-# ------------------------------------- dodatak iz test skupa
-sort(colSums(is.na(data))[colSums(is.na(data)) > 0])
-
-#View(data %>%
-#       filter(is.na(Exterior1st)))
-
-tbl <- xtabs(~Exterior1st, data = data)
-most_common <- names(which.max(tbl))
-data$Exterior1st[is.na(data$Exterior1st)] <- most_common
-
-tbl <- xtabs(~Exterior2nd, data = data)
-most_common <- names(which.max(tbl))
-data$Exterior2nd[is.na(data$Exterior2nd)] <- most_common
-
-#View(data %>%
-#       filter(is.na(KitchenQual)))
-
-tbl <- xtabs(~KitchenQual, data = data)
-most_common <- names(which.max(tbl))
-data$KitchenQual[is.na(data$KitchenQual)] <- most_common
-
-#View(data %>%
-#       filter(is.na(SaleType)))
-
-tbl <- xtabs(~SaleType, data = data)
-most_common <- names(which.max(tbl))
-data$SaleType[is.na(data$SaleType)] <- most_common
-
-#View(data %>%
-#       filter(is.na(Utilities)))
-
-tbl <- xtabs(~Utilities, data = data)
-most_common <- names(which.max(tbl))
-data$Utilities[is.na(data$Utilities)] <- most_common
-
-#View(data)
-
-# 2 NA za BsmtFullBath i BsmtHalfBath su za redove gde ne postoji Basement
-# tu cemo staviti 0
-#View(data %>%
-#       filter(is.na(BsmtFullBath)))
-
-data$BsmtFullBath[is.na(data$BsmtFullBath)] <- 0
-data$BsmtHalfBath[is.na(data$BsmtHalfBath)] <- 0
-
-#View(data %>%
-#       filter(is.na(Functional)))
-tbl <- xtabs(~Functional, data = data)
-most_common <- names(which.max(tbl))
-data$Functional[is.na(data$Functional)] <- most_common
-
-#View(data %>%
-#       filter(is.na(MSZoning)))
-tbl <- xtabs(~MSZoning, data = data)
-most_common <- names(which.max(tbl))
-data$MSZoning[is.na(data$MSZoning)] <- most_common
+View(data)
 
 sort(colSums(is.na(data))[colSums(is.na(data)) > 0])
-
-
+# ---------------------------------------- KRAJ ZA NOVI SKUP
 
 ### Enkodiranje promenljivih ###################################################
 
@@ -541,6 +517,7 @@ data$GarageFinish <- as.integer(data$GarageFinish)
 
 # table(data$PoolQC)
 #---------------------------------------
+str(data)
 
 nominalne <- data %>% 
   select(where(is.character)) %>% 
@@ -558,11 +535,12 @@ str(data$MSSubClass)
 ################################################################################
 
 # -----------------------------------------------------
+data.train = data[train_idx, ]
+data.test = data[-train_idx, ]
+#data <- data[1:nrow(data), ]
+#data.test  <- data[(nrow(data)+1):nrow(data), ] 
 
-data <- data[1:nrow(data), ]
-data.test  <- data[(nrow(data)+1):nrow(data), ] 
-
-data.test$SalePrice <- NULL
+# data.test$SalePrice <- NULL
 
 summary(data)
 # -----------------------------------------------------
@@ -865,8 +843,8 @@ na_columns
 
 ### Feature engineering ########################################################
 
-data.test$SalePrice <- NA
-data <- rbind(data, data.test)
+# data.test$SalePrice <- NA
+data <- rbind(data.train, data.test)
 
 table(data$YrSold)
 
@@ -899,9 +877,7 @@ ggplot(data = data[!is.na(data$SalePrice),], aes(x = TotalFinishedSF, y = SalePr
 data$HouseAge <- data$YrSold - data$YearBuilt
 data$HouseRemodAge <- data$YrSold - data$YearRemodAdd
 
-data$IsNew <- ifelse(data$YrSold==data$YearBuilt, 1, 0)
 
-# za godinu uzimamo godinu remodela
 ggplot(data=data[!is.na(data$SalePrice),], aes(x=HouseAge, y=SalePrice))+
   geom_point(col='blue') + geom_smooth(method = "lm", se=FALSE, color="black", aes(group=1)) +
   scale_y_continuous(breaks= seq(0, 800000, by=100000), labels = comma)
@@ -911,19 +887,21 @@ data$Remodeled <- ifelse(data$YearBuilt==data$YearRemodAdd, 0, 1)
 # 0 - ne
 # 1 - da
 
-df_summary <- data[!is.na(data$SalePrice), ] %>%
-  group_by(Remodeled) %>%
-  summarise(
-    median_price = median(SalePrice, na.rm = TRUE),
-    count = n()
-  )
+data$Remodeled <- as.factor(data$Remodeled)
 
-ggplot(df_summary, aes(x = as.factor(Remodeled), y = median_price)) +
-  geom_col(fill = 'blue') +           
-  geom_text(aes(label = count, y = median_price + 20000), size = 6) + 
-  scale_y_continuous(breaks = seq(0, 800000, by = 50000), labels = comma) +
-  theme_minimal()
-# Vidi se da one koje nisu remodelirane imaju vecu cenu
+# Analiza pokazuje da kuće koje nisu renovirane imaju veću medijanu cene.
+ggplot(data=data[!is.na(data$SalePrice),], aes(x = Remodeled, y = SalePrice)) +
+  geom_boxplot(fill = "skyblue", alpha = 0.7) +
+  scale_y_continuous(labels = scales::comma) +
+  labs(
+    title = "Odnos između renoviranja i cene kuce",
+    x = "Da li je kuca renovirana",
+    y = "Cena kuce (SalePrice)"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+  )
 
 
 data$TotalPorchSF <- data$OpenPorchSF + data$EnclosedPorch +
@@ -945,9 +923,8 @@ data$TotalBaths <- cut(
 )
 #
 table(data$TotalBaths)
-data$TotalBaths <- as.integer(data$TotalBaths)
 
-ggplot(data=data[!is.na(data$SalePrice),], aes(x = TotalBaths, y = SalePrice)) +
+ggplot(data=data, aes(x = TotalBaths, y = SalePrice)) +
   geom_boxplot(fill = "skyblue", alpha = 0.7) +
   scale_y_continuous(labels = scales::comma) +
   labs(
@@ -960,11 +937,12 @@ ggplot(data=data[!is.na(data$SalePrice),], aes(x = TotalBaths, y = SalePrice)) +
     plot.title = element_text(hjust = 0.5, face = "bold"),
   )
 
+data$TotalBaths <- as.integer(data$TotalBaths)
+
 
 
 data$IsNew <- ifelse(data$YrSold==data$YearBuilt, 1, 0)
 data$IsNew = as.factor(data$IsNew)
-
 
 data$HasBath <- ifelse(data$BsmtFullBath + data$FullBath + 0.5 * (data$BsmtHalfBath + data$HalfBath) > 0, 1, 0)
 data$HasBath <- as.factor(data$HasBath)
@@ -984,7 +962,7 @@ data$HasPool <- as.factor(data$HasPool)
 
 # Cene zavise od toga da li je kuca nova.
 
-ggplot(data[!is.na(data$SalePrice), ], aes(x = IsNew, y = SalePrice)) +
+ggplot(data, aes(x = IsNew, y = SalePrice)) +
   geom_boxplot(fill = "skyblue", alpha = 0.7) +
   scale_y_continuous(labels = comma) +
   labs(title = "Odnos izmedu novosti kuce i cene",
@@ -995,7 +973,7 @@ ggplot(data[!is.na(data$SalePrice), ], aes(x = IsNew, y = SalePrice)) +
 
 # Svaka kuca ima makar jedno kupatilo, pa nam ovaj atribut nije znacajan.
 
-ggplot(data[!is.na(data$SalePrice), ], aes(x = HasBath, y = SalePrice)) +
+ggplot(data, aes(x = HasBath, y = SalePrice)) +
   geom_boxplot(fill = "skyblue", alpha = 0.7) +
   scale_y_continuous(labels = comma) +
   labs(title = "Odnos izmedu prisustva kupatila i cene",
@@ -1006,10 +984,9 @@ ggplot(data[!is.na(data$SalePrice), ], aes(x = HasBath, y = SalePrice)) +
 
 data$HasBath <- NULL
 
-#Postojanje podruma utice na SalePrice.
+# Postojanje podruma utice na SalePrice.
 
-# Boxplot za HasBsmt
-ggplot(data[!is.na(data$SalePrice), ], aes(x = HasBsmt, y = SalePrice)) +
+ggplot(data, aes(x = HasBsmt, y = SalePrice)) +
   geom_boxplot(fill = "skyblue", alpha = 0.7) +
   scale_y_continuous(labels = comma) +
   labs(title = "Odnos izmedu prisustva podruma i cene",
@@ -1017,6 +994,47 @@ ggplot(data[!is.na(data$SalePrice), ], aes(x = HasBsmt, y = SalePrice)) +
        y = "Cena kuce") +
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+
+
+# Postojanje garaze utice na SalePrice
+
+ggplot(data, aes(x = HasGarage, y = SalePrice)) +
+  geom_boxplot(fill = "skyblue", alpha = 0.7) +
+  scale_y_continuous(labels = scales::comma) +
+  labs(
+    title = "Odnos izmedju posedovanja garaze i cene kuce",
+    x = "HasGarage",
+    y = "Cena kuce"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+
+# Postojanje kamina utice na SalePrice.
+
+ggplot(data, aes(x = HasFireplace, y = SalePrice)) +
+  geom_boxplot(fill = "skyblue", alpha = 0.7) +
+  scale_y_continuous(labels = scales::comma) +
+  labs(
+    title = "Odnos izmedju posedovanja kamina i cene kuce",
+    x = "HasFireplace",
+    y = "Cena kuce"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+
+# bazen
+# malo kuca ima bazen
+ggplot(data, aes(x = HasPool, y = SalePrice)) +
+  geom_boxplot(fill = "skyblue", alpha = 0.7) +
+  scale_y_continuous(labels = scales::comma) +
+  labs(
+    title = "Odnos izmedju posedovanja bazena i cene kuce",
+    x = "HasPool",
+    y = "Cena kuce"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+
 
 
 #Mogu se uociti dva reda gde je HouseAge manji od 0, sto znaci da je kuca prodata pre nego sto je izgradena, odnosno da je doslo do greske.  
@@ -1029,11 +1047,12 @@ data <- data %>%
 
 
 
+data.train = data[train_idx, ]
+data.test = data[-train_idx, ]
+#data <- data[1:nrow(data), ]
+#data.test  <- data[(nrow(data)+1):nrow(data), ] 
 
-data <- data[1:nrow(data), ]
-data.test  <- data[(nrow(data)+1):nrow(data), ] 
-
-data.test$SalePrice <- NULL
+# data.test$SalePrice <- NULL
 
 
 ### Implementacija i procena modela ############################################
