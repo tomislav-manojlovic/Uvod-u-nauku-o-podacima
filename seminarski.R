@@ -306,9 +306,9 @@ data$PoolQC[is.na(data$PoolQC)] <- "NoPool"
 ggplot(data, aes(x = PoolQC, y = PoolArea)) +
   geom_boxplot(fill = "#1f78b4", alpha = 0.7) +
   labs(
-    title = "Povezanost između PoolQC i PoolArea",
-    x = "PoolQC",
-    y = "PoolArea"
+    title = "Povezanost između kvaliteta bazena (PoolQC) i površine bazena (PoolArea)",
+    x = "Kvalitet bazena",
+    y = "Površina bazena (sq ft)"
   ) +
   theme_minimal()
 
@@ -407,15 +407,7 @@ data.test = data[-train_idx, ]
 
 # plotovanje svih numerickih karakteristika
 
-ggplot(data.train, aes(x = as.factor(MSSubClass), y = SalePrice)) +
-  geom_boxplot(fill = "skyblue") +
-  scale_y_continuous(labels = comma) +
-  labs(
-    title = "Distribucija SalePrice po MSSubClass",
-    x = "MSSubClass",
-    y = "SalePrice"
-  ) +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+ggplot(data.train, aes(x = MSSubClass, y = SalePrice)) + geom_point()
 
 ggplot(data.train, aes(x = LotFrontage, y = SalePrice)) + geom_point()
 data.train %>% filter(LotFrontage > 300) %>% select(Order)
@@ -425,27 +417,11 @@ ggplot(data.train, aes(x = LotArea, y = SalePrice)) + geom_point()
 data.train %>% filter(LotArea > 100000) %>% select(Order)
 # 2072, 1571, 957, 2116
 
-ggplot(data.train, aes(x = as.factor(OverallQual), y = SalePrice)) +
-  geom_boxplot(fill = "skyblue") +
-  scale_y_continuous(labels = comma) +
-  labs(
-    title = "Distribucija SalePrice po OverallQual",
-    x = "OverallQual",
-    y = "SalePrice"
-  ) +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+ggplot(data.train, aes(x = OverallQual, y = SalePrice)) + geom_point()
 data.train %>% filter(OverallQual == 10 & SalePrice < 200000) %>% select(Order)
 # 1499, 2181
 
-ggplot(data.train, aes(x = as.factor(OverallCond), y = SalePrice)) +
-  geom_boxplot(fill = "skyblue") +
-  scale_y_continuous(labels = comma) +
-  labs(
-    title = "Distribucija SalePrice po OverallCond",
-    x = "OverallCond",
-    y = "SalePrice"
-  ) +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+ggplot(data.train, aes(x = OverallCond, y = SalePrice)) + geom_point()
 data.train %>% filter(OverallCond == 6 & SalePrice > 600000) %>% select(Order)
 # 1768
 data.train %>% filter(OverallCond == 2 & SalePrice > 300000) %>% select(Order)
@@ -491,112 +467,40 @@ ggplot(data.train, aes(x = GrLivArea, y = SalePrice)) + geom_point()
 data.train %>% filter(GrLivArea > 4500) %>% select(Order)
 # 1499, 2181
 
-ggplot(data.train, aes(x = as.factor(BsmtFullBath), y = SalePrice)) +
-  geom_boxplot(fill = "skyblue") +
-  scale_y_continuous(labels = comma) +
-  labs(
-    title = "Distribucija SalePrice po BsmtFullBath",
-    x = "BsmtFullBath",
-    y = "SalePrice"
-  ) +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+ggplot(data.train, aes(x = BsmtFullBath, y = SalePrice)) + geom_point()
 
-ggplot(data.train, aes(x = as.factor(BsmtHalfBath), y = SalePrice)) +
-  geom_boxplot(fill = "skyblue") +
-  scale_y_continuous(labels = comma) +
-  labs(
-    title = "Distribucija SalePrice po BsmtHalfBath",
-    x = "BsmtHalfBath",
-    y = "SalePrice"
-  ) +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+ggplot(data.train, aes(x = BsmtHalfBath, y = SalePrice)) + geom_point()
 data.train %>% filter(BsmtHalfBath == 2) %>% select(Order)
 # View(data.train %>% filter(BsmtHalfBath == 2))
 # 1734, 2821, 2499
 data.train %>% filter(BsmtHalfBath == 1 & SalePrice > 700000) %>% select(Order)
 # 1768
 
-ggplot(data.train, aes(x = as.factor(FullBath), y = SalePrice)) +
-  geom_boxplot(fill = "skyblue") +
-  scale_y_continuous(labels = comma) +
-  labs(
-    title = "Distribucija SalePrice po FullBath",
-    x = "FullBath",
-    y = "SalePrice"
-  ) +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+ggplot(data.train, aes(x = FullBath, y = SalePrice)) + geom_point()
 
-ggplot(data.train, aes(x = as.factor(HalfBath), y = SalePrice)) +
-  geom_boxplot(fill = "skyblue") +
-  scale_y_continuous(labels = comma) +
-  labs(
-    title = "Distribucija SalePrice po HalfBath",
-    x = "HalfBath",
-    y = "SalePrice"
-  ) +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+ggplot(data.train, aes(x = HalfBath, y = SalePrice)) + geom_point()
 
-ggplot(data.train, aes(x = as.factor(BedroomAbvGr), y = SalePrice)) +
-  geom_boxplot(fill = "skyblue") +
-  scale_y_continuous(labels = comma) +
-  labs(
-    title = "Distribucija SalePrice po BedroomAbvGr",
-    x = "BedroomAbvGr",
-    y = "SalePrice"
-  ) +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+ggplot(data.train, aes(x = BedroomAbvGr, y = SalePrice)) + geom_point()
 data.train %>% filter(BedroomAbvGr == 8) %>% select(Order)
 # 2195
 
-ggplot(data.train, aes(x = as.factor(KitchenAbvGr), y = SalePrice)) +
-  geom_boxplot(fill = "skyblue") +
-  scale_y_continuous(labels = comma) +
-  labs(
-    title = "Distribucija SalePrice po KitchenAbvGr",
-    x = "KitchenAbvGr",
-    y = "SalePrice"
-  ) +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+ggplot(data.train, aes(x = KitchenAbvGr, y = SalePrice)) + geom_point()
 data.train %>% filter(KitchenAbvGr == 3) %>% select(Order)
 # 713, 716
 data.train %>% filter(KitchenAbvGr == 0) %>% select(Order)
 # 2821, 2254 
 
-ggplot(data.train, aes(x = as.factor(TotRmsAbvGrd), y = SalePrice)) +
-  geom_boxplot(fill = "skyblue") +
-  scale_y_continuous(labels = comma) +
-  labs(
-    title = "Distribucija SalePrice po TotRmsAbvGrd",
-    x = "TotRmsAbvGrd",
-    y = "SalePrice"
-  ) +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+ggplot(data.train, aes(x = TotRmsAbvGrd, y = SalePrice)) + geom_point()
 data.train %>% filter(TotRmsAbvGrd > 12) %>% select(Order)
 # 2195
 
-ggplot(data.train, aes(x = as.factor(Fireplaces), y = SalePrice)) +
-  geom_boxplot(fill = "skyblue") +
-  scale_y_continuous(labels = comma) +
-  labs(
-    title = "Distribucija SalePrice po Fireplaces",
-    x = "Fireplaces",
-    y = "SalePrice"
-  ) +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+ggplot(data.train, aes(x = Fireplaces, y = SalePrice)) + geom_point()
 data.train %>% filter(Fireplaces == 4) %>% select(Order)
 # 2499
 
 ggplot(data.train %>% filter(GarageYrBlt > 0), aes(x = GarageYrBlt, y = SalePrice)) + geom_point()
 
-ggplot(data.train, aes(x = as.factor(GarageCars), y = SalePrice)) +
-  geom_boxplot(fill = "skyblue") +
-  scale_y_continuous(labels = comma) +
-  labs(
-    title = "Distribucija SalePrice po GarageCars",
-    x = "GarageCars",
-    y = "SalePrice"
-  ) +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+ggplot(data.train, aes(x = GarageCars, y = SalePrice)) + geom_point()
 data.train %>% filter(GarageCars == 5) %>% select(Order)
 # 747
 
@@ -1215,15 +1119,19 @@ mae(y_test, lasso_preds)
 
 library(randomForest)
 
-dummies <- dummyVars(~ ., data = data[, !names(data) %in% "SalePrice"])
-data.num <- data.frame(predict(dummies, newdata = data))
-data.num$SalePrice <- data$SalePrice
+dummies <- dummyVars(~ ., data = data.train[, !names(data.train) %in% "SalePrice"])
+
+data.train.num <- data.frame(predict(dummies, newdata = data.train))
+data.train.num$SalePrice <- data.train$SalePrice
 
 data.test.num <- data.frame(predict(dummies, newdata = data.test))
 
-rf_model <- randomForest(SalePrice ~ ., data = data.num, ntree = 50, mtry = 10, importance = TRUE)
-rf_model
-# varImpPlot(rf_model)
+rf_model <- randomForest(SalePrice ~ ., data = data.train.num, ntree = 50, mtry = 10, importance = TRUE)
+
+rf_preds <- expm1(predict(rf_model, newdata = data.test.num))
+
+rmse(data.test$SalePrice, rf_preds)
+mae(data.test$SalePrice, rf_preds)
 
 ## XGBoost
 
@@ -1249,11 +1157,8 @@ xgb_model = xgboost(data = train_matrix, label = train_label, nrounds = 100, obj
 
 pred_xgb = predict(xgb_model, newdata = val_matrix)
 
-rmse_score = rmse(val_data$SalePrice, pred_xgb)
-mae_score = mae(val_data$SalePrice, pred_xgb)
-
-rmse_score
-mae_score
+rmse(val_data$SalePrice, pred_xgb)
+mae(val_data$SalePrice, pred_xgb)
 
 ## Support Vector Regression (SVR)
 
@@ -1269,6 +1174,21 @@ mae(data.test$SalePrice, pred_svr)
 
 library(neuralnet)
 
-nn_model = neuralnet(SalePrice ~ OverallQual + GrLivArea + GarageCars + TotalBaths,
-                     data = data.train, hidden = c(5, 3))
-plot(nn_model)
+dummies <- dummyVars(~ TotalSF + OverallQual + GarageCars + TotalBaths +
+                       HouseAge + HasGarage + Neighborhood + KitchenQual + Fireplaces,
+                     data = data.train)
+
+train.num <- data.frame(predict(dummies, newdata = data.train))
+train.num$SalePrice <- data.train$SalePrice
+
+test.num <- data.frame(predict(dummies, newdata = data.test))
+
+nn_model = neuralnet(SalePrice ~ .,
+                     data = train.num, hidden = c(10, 5), stepmax = 1e6, linear.output = T)
+# plot(nn_model)
+
+nn_preds <- compute(nn_model, test.num[, names(test.num) != "SalePrice"])
+nn_preds <- expm1(nn_preds$net.result)
+
+rmse(data.test$SalePrice, nn_preds)
+mae(data.test$SalePrice, nn_preds)
