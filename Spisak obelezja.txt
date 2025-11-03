@@ -1,0 +1,82 @@
+Spisak obeležja i kratak opis za svako:
+1.	Id – Jedinstveni identifikator.
+2.	MSSubClass – Klasa građevine.
+3.	MSZoning – Opšta zonacija zemljišta.
+4.	LotFrontage – Dužina placa povezanog sa ulicom (u stopama).
+5.	LotArea – Površina placa u kvadratnim stopama.
+6.	Street – Tip pristupnog puta.
+7.	Alley – Tip pristupa prolazom.
+8.	LotShape – Opšti oblik parcele.
+9.	LandContour – Ravnost zemljišta.
+10.	Utilities – Tip dostupnih komunalnih usluga.
+11.	LotConfig – Konfiguracija parcele.
+12.	LandSlope – Nagib zemljišta.
+13.	Neighborhood – Fizička lokacija unutar grada Ames.
+14.	Condition1 – Blizina glavnog puta ili železnice.
+15.	Condition2 – Blizina glavnog puta ili železnice (ako postoji drugi).
+16.	BldgType – Tip objekta.
+17.	HouseStyle – Stil kuće.
+18.	OverallQual – Ukupan kvalitet materijala i završne obrade.
+19.	OverallCond – Ukupno stanje objekta.
+20.	YearBuilt – Godina izgradnje.
+21.	YearRemodAdd – Godina renoviranja ili dogradnje.
+22.	RoofStyle – Tip krova.
+23.	RoofMatl – Materijal krova.
+24.	Exterior1st – Spoljašnja obloga kuće.
+25.	Exterior2nd – Drugi tip spoljašnje obloge (ako postoji).
+26.	MasVnrType – Tip malterisanja ili dekorativnog kamena.
+27.	MasVnrArea – Površina malterisanja ili dekorativnog kamena u kvadratnim stopama.
+28.	ExterQual – Kvalitet spoljašnjeg materijala.
+29.	ExterCond – Trenutno stanje spoljašnjeg materijala.
+30.	Foundation – Tip temelja.
+31.	BsmtQual – Visina podruma.
+32.	BsmtCond – Opšte stanje podruma.
+33.	BsmtExposure – Podrum sa izlazom ili na nivou bašte.
+34.	BsmtFinType1 – Kvalitet završene površine podruma (prvi tip).
+35.	BsmtFinSF1 – Površina završenog prostora u kvadratnim stopama (prvi tip).
+36.	BsmtFinType2 – Kvalitet završene površine podruma (drugi tip, ako postoji).
+37.	BsmtFinSF2 – Površina završenog prostora u kvadratnim stopama (drugi tip).
+38.	BsmtUnfSF – Nepotpuno završeni prostor podruma u kvadratnim stopama.
+39.	TotalBsmtSF – Ukupna površina podruma u kvadratnim stopama.
+40.	Heating – Tip grejanja.
+41.	HeatingQC – Kvalitet i stanje grejanja.
+42.	CentralAir – Centralno klimatizovanje (da/ne).
+43.	Electrical – Elektroinstalacije.
+44.	1stFlrSF – Površina prvog sprata u kvadratnim stopama.
+45.	2ndFlrSF – Površina drugog sprata u kvadratnim stopama.
+46.	LowQualFinSF – Kvadratura završene površine niskog kvaliteta.
+47.	GrLivArea – Površina stambenog prostora iznad nivoa zemlje.
+48.	BsmtFullBath – Broj punih kupatila u podrumu.
+49.	BsmtHalfBath – Broj polu-kupatila u podrumu.
+50.	FullBath – Broj punih kupatila iznad nivoa zemlje.
+51.	HalfBath – Broj polu-kupatila iznad nivoa zemlje.
+52.	Bedroom – Broj spavaćih soba iznad podruma.
+53.	Kitchen – Broj kuhinja.
+54.	KitchenQual – Kvalitet kuhinje.
+55.	TotRmsAbvGrd – Ukupan broj soba iznad nivoa zemlje (bez kupatila).
+56.	Functional – Ocena funkcionalnosti kuće.
+57.	Fireplaces – Broj kamina.
+58.	FireplaceQu – Kvalitet kamina.
+59.	GarageType – Lokacija garaže.
+60.	GarageYrBlt – Godina izgradnje garaže.
+61.	GarageFinish – Završna obrada unutrašnjosti garaže.
+62.	GarageCars – Kapacitet garaže (broj automobila).
+63.	GarageArea – Površina garaže u kvadratnim stopama.
+64.	GarageQual – Kvalitet garaže.
+65.	GarageCond – Stanje garaže.
+66.	PavedDrive – Da li je prilaz asfaltiran.
+67.	WoodDeckSF – Površina drvene terase u kvadratnim stopama.
+68.	OpenPorchSF – Površina otvorene verande u kvadratnim stopama.
+69.	EnclosedPorch – Površina zatvorene verande u kvadratnim stopama.
+70.	3SsnPorch – Površina trisezonske verande u kvadratnim stopama.
+71.	ScreenPorch – Površina mrežaste verande u kvadratnim stopama.
+72.	PoolArea – Površina bazena u kvadratnim stopama.
+73.	PoolQC – Kvalitet bazena.
+74.	Fence – Kvalitet ograde.
+75.	MiscFeature – Ostale karakteristike koje nisu pokrivene drugim kategorijama.
+76.	MiscVal – Vrednost dodatne karakteristike u dolarima.
+77.	MoSold – Mesec prodaje.
+78.	YrSold – Godina prodaje.
+79.	SaleType – Tip prodaje.
+80.	SaleCondition – Uslovi prodaje.
+81.	SalePrice – Prodajna cena objekta u dolarima (ciljna promenljiva).
