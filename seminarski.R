@@ -851,7 +851,7 @@ high_corr
 
 
 
-### Feature engineering ########################################################
+### FEATURE ENGINEERING ########################################################
 
 data <- rbind(data.train, data.test)
 
@@ -1054,7 +1054,7 @@ nrow(data.train)
 data.test = data[-train_idx, ]
 
 nrow(data.test)
-data.train = drop_na(data.train)
+data.test = drop_na(data.test)
 nrow(data.test)
 
 
@@ -1079,11 +1079,27 @@ print(cor_with_saleprice)
 
 # proveravamo simetricnost vrednosti atributa SalePrice
 
-hist(data.train$SalePrice)
+ggplot(data.train, aes(x = SalePrice)) +
+  geom_histogram(bins = 20, fill = "#1f78b4", color = "black", alpha = 0.7) +
+  scale_x_continuous(labels = scales::comma) + 
+  labs(
+    title = "Raspodela SalePrice",
+    x = "Cena",
+    y = "Broj kuća"
+  ) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
 
 data.train = data.train %>% mutate(SalePrice = log1p(SalePrice))
 
-hist(data.train$SalePrice)
+ggplot(data.train, aes(x = SalePrice)) +
+  geom_histogram(bins = 20, fill = "#1f78b4", color = "black", alpha = 0.7) +
+  scale_x_continuous(labels = scales::comma) + 
+  labs(
+    title = "Raspodela SalePrice",
+    x = "Cena",
+    y = "Broj kuća"
+  ) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
 
 # primecujemo neke vrednosti iza 10
 # da proverimo sta se tu radi
@@ -1091,19 +1107,39 @@ hist(data.train$SalePrice)
 data.train %>% filter(SalePrice < 10) %>% select(Order, SalePrice)
 data.train = data.train %>% filter(SalePrice >= 10)
 
-hist(data.train$SalePrice)
+ggplot(data.train, aes(x = SalePrice)) +
+  geom_histogram(bins = 20, fill = "#1f78b4", color = "black", alpha = 0.7) +
+  scale_x_continuous(labels = scales::comma) + 
+  labs(
+    title = "Raspodela SalePrice",
+    x = "Cena",
+    y = "Broj kuća"
+  ) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
 
 # koristimo metod forward selection za konstruisanje modela linearne regresije
 
-model1 = lm(SalePrice ~ TotalSF, data = data.train) # atribut sa najboljom korelacijom
+model1 = lm(SalePrice ~ TotalSF, data = data.train)
 summary(model1)
 
-plot(data$TotalSF, data$SalePrice)
+ggplot(data = data[!is.na(data$SalePrice),], aes(x = TotalSF, y = SalePrice)) +
+  geom_point(col = "steelblue") +
+  scale_y_continuous(breaks = seq(0, 800000, by = 100000), labels = scales::comma) +
+  theme_minimal()
 
-model2 = lm(SalePrice ~ TotalSF + OverallQual, data = data.train) # atribut sa drugom najboljom korelacijom
+model2 = lm(SalePrice ~ TotalSF + OverallQual, data = data.train)
 summary(model2)
 
-plot(data.train$OverallQual, data.train$SalePrice)
+ggplot(data, aes(x = OverallQual, y = SalePrice, group = OverallQual)) +
+  geom_boxplot(fill = "skyblue", alpha = 0.7) +
+  scale_y_continuous(breaks = seq(0, 800000, by = 100000), labels = scales::comma) +
+  labs(
+    title = "Odnos između OverallQual i SalePrice",
+    x = "OverallQual",
+    y = "SalePrice"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
 
 # gledamo korelaciju izmedju atributa da bismo izbegli dodavanje atributa
 # koji bi prouzrokovali multikoliearnost
@@ -1118,12 +1154,22 @@ cor(data.train$OverallQual, data.train$GarageCars)
 model3 = lm(SalePrice ~ TotalSF + OverallQual + GarageCars, data = data.train)
 summary(model3)
 
-plot(data.train$GarageCars, data.train$SalePrice)
+ggplot(data, aes(x = GarageCars, y = SalePrice, group = GarageCars)) +
+  geom_boxplot(fill = "skyblue", alpha = 0.7) +
+  scale_y_continuous(breaks = seq(0, 800000, by = 100000),labels = scales::comma) +
+  labs(
+    title = "Odnos između GarageCars i SalePrice",
+    x = "GarageCars",
+    y = "SalePrice"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
 
 model4 = lm(SalePrice ~ TotalSF + OverallQual + GarageCars + TotalBaths, data = data.train)
 summary(model4)
 
-vif(model4) # vidimo da nema multikolinearnosti (vif < 5)
+vif(model4)
+# vidimo da nema multikolinearnosti (vif < 5)
 
 # mozemo da nastavimo sa dodavanjem
 
@@ -1146,7 +1192,16 @@ vif(model7)
 
 cor(data.train$TotalSF, data.train$TotRmsAbvGrd)
 
-plot(data.train$TotRmsAbvGrd, data.train$TotalSF)
+ggplot(data, aes(x = TotRmsAbvGrd, y = SalePrice, group = TotRmsAbvGrd)) +
+  geom_boxplot(fill = "skyblue", alpha = 0.7) +
+  scale_y_continuous(breaks = seq(0, 800000, by = 100000), labels = scales::comma) +
+  labs(
+    title = "Odnos između TotRmsAbvGrd i SalePrice",
+    x = "TotRmsAbvGrd",
+    y = "SalePrice"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
 
 model8 = lm(SalePrice ~ TotalSF * TotRmsAbvGrd + OverallQual + GarageCars + TotalBaths + HouseAge
             + Neighborhood, data = data.train)
@@ -1175,8 +1230,6 @@ vif(model11)
 
 x_train <- model.matrix(SalePrice ~ ., data = data.train)[, -1]
 y_train <- data.train$SalePrice
-
-###############
 
 for (col in names(data.test)) {
   if (is.factor(data.train[[col]])) {
