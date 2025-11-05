@@ -1293,6 +1293,8 @@ dummies <- dummyVars(~ ., data = train_data[, !names(train_data) %in% "SalePrice
 train_data_num <- data.frame(predict(dummies, newdata = train_data))
 train_data_num$SalePrice <- train_data$SalePrice
 
+train_data_num$SalePrice <- log1p(train_data_num$SalePrice)
+
 val_data_num <- data.frame(predict(dummies, newdata = val_data))
 
 train_matrix <- as.matrix(train_data_num[, !names(train_data_num) %in% "SalePrice"])
@@ -1303,7 +1305,7 @@ val_label  <- val_data$SalePrice
 
 xgb_model = xgboost(data = train_matrix, label = train_label, nrounds = 100, objective = "reg:squarederror", verbose = 0)
 
-pred_xgb = predict(xgb_model, newdata = val_matrix)
+pred_xgb = expm1(predict(xgb_model, newdata = val_matrix))
 
 rmse(val_data$SalePrice, pred_xgb)
 mae(val_data$SalePrice, pred_xgb)
@@ -1312,8 +1314,36 @@ mae(val_data$SalePrice, pred_xgb)
 
 library(e1071)
 
-svr_model = svm(SalePrice ~ ., data = data.train)
-pred_svr = predict(svr_model, newdata = data.test)
+train_data = data.train[sapply(data.train, is.numeric)]
+test_data = data.test[sapply(data.test, is.numeric)]
+
+X_train = train_data %>% select(-SalePrice)
+y_train = train_data$SalePrice
+
+X_test = test_data %>% select(-SalePrice)
+y_test = test_data$SalePrice
+
+scaler_X <- preProcess(X_train, method = c("center", "scale"))
+X_train_scaled <- predict(scaler_X, X_train)
+X_test_scaled  <- predict(scaler_X, X_test)
+
+y_train_scaled <- scale(y_train)
+
+y_mean <- attr(y_train_scaled, "scaled:center")
+y_sd   <- attr(y_train_scaled, "scaled:scale")
+
+svr_model <- svm(
+  x = X_train_scaled,
+  y = y_train_scaled,
+  type = "eps-regression",
+  kernel = "radial",
+  cost = 10,
+  gamma = 0.1
+)
+
+pred_scaled <- predict(svr_model, newdata = X_test_scaled)
+pred_original <- pred_scaled * y_sd + y_mean
+pred_svr <- expm1(pred_original)
 
 rmse(data.test$SalePrice, pred_svr)
 mae(data.test$SalePrice, pred_svr)
