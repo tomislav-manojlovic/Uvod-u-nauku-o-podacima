@@ -95,7 +95,7 @@ Pre treniranja modela, dataset je pažljivo očišćen i pripremljen:
 - **Ispravljanje neobičnih vrednosti i grešaka**:
   - `GarageYrBlt = 2207` ispravljeno na 2007
   - `YearRemodAdd > YrSold` zamenjeno sa `YearBuilt`
-  - Redovi sa negativnim `HouseAge` ili gde je `YearBuilt > YearRemodAdd` obrisani
+  - Redovi sa negativnim `HouseAge` ili gde je `YearBuilt > YearRemodAdd`su obrisani
 
 ---
 
@@ -201,3 +201,4 @@ Najznačajniji faktori koji utiču na cenu su: ukupna površina (`TotalSF`), kva
 Projekat se može dodatno unaprediti dodavanjem novih promenljivih i preciznijim otkrivanjem outliera pomoću Z-score pristupa.
 
 Rad pokazuje da pravilna analiza i priprema podataka, kvalitetan feature engineering i EDA igraju ključnu ulogu u preciznom predviđanju cena kuća. Linearna regresija se pokazala efikasnim i interpretabilnim pristupom, dok napredniji modeli mogu dodatno poboljšati performanse.
+
