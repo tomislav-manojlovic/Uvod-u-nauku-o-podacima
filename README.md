@@ -76,12 +76,16 @@ Za potrebe ovog istraživanja korišćen je **Ames Housing Dataset**, preuzet sa
 Pre treniranja modela, dataset je pažljivo očišćen i pripremljen:
 
 - **Uklanjanje outliera**:  
-  Ekstremne vrednosti mogu iskriviti model i smanjiti tačnost. Scatter plotovi su korišćeni za identifikaciju outliera u odnosu na `SalePrice`.  
-  Odabrani redovi sa neuobičajeno visokim ili niskim vrednostima su uklonjeni (`Order` vrednosti uklonjene: 1499, 1266, 2072, ...).
+  Ekstremne vrednosti mogu značajno iskriviti model i smanjiti njegovu tačnost.  
+  Da bismo ih identifikovali, korišćeni su scatter plotovi koji prikazuju odnos između numeričkih prediktora i ciljne promenljive `SalePrice`.
+
+  Na osnovu vizuelne inspekcije izdvojeni su redovi sa neuobičajeno visokim ili niskim vrednostima. Njihovi indeksi su pronađeni pomoću funkcije `filter()` i uklonjeni iz skupa podataka.  
+  `Order` vrednosti uklonjene iz skupa trening podataka su:  
+  `1499, 1266, 2072, 1571, 957, 2116, 2181, 1734, 2499, 1768, 18, 1761, 2667, 2821, 2195, 713, 716, 2254, 926, 747, 2294, 2066, 727, 2090`.
 
 - **Popunjavanje nedostajućih vrednosti (NA)**:  
-  Numeričke kolone su popunjene medijanom, dok su kategorijske kolone popunjene modom.  
-  Kolone sa NA vrednostima uključuju: `BsmtQual`, `GarageYrBlt`, `LotFrontage`, `FireplaceQu`, `PoolQC` i dr.
+  Kolone sa NA vrednostima uključuju:  
+  `BsmtFinSF1, BsmtFinSF2, BsmtUnfSF, TotalBsmtSF, GarageCars, GarageArea, BsmtFullBath, BsmtHalfBath, MasVnrArea, BsmtQual, BsmtCond, BsmtExposure, BsmtFinType1, BsmtFinType2, GarageType, GarageFinish, GarageQual, GarageCond, GarageYrBlt, LotFrontage, FireplaceQu, Fence, Alley, MiscFeature, PoolQC, Electrical`.
 
 - **Kategorijske i ordinalne promenljive**:
 
@@ -142,7 +146,7 @@ Cilj projekta je kreiranje robustnih modela koji predviđaju cenu kuće (`SalePr
 ### Proces kreiranja modela
 
 - Korišćen je **iterativni forward-selection** proces:
-  1. Početak sa jednim atributom (najviše obećavajući).
+  1. Početak sa jednim atributom.
   2. Dodavanje atributa jedan po jedan radi smanjenja greške modela.
   3. Kontrola da se izbegne overfitting.
 - Odabir atributa baziran je na EDA, domenskom znanju i korelaciji između prediktora.
@@ -176,15 +180,15 @@ Rezultati korišćenih modela sa metrikama RMSE i MAE:
 | Ridge Regression         | 18,774.8  | 13,329.79 |
 | Lasso Regression         | 18,485.85 | 13,109.65 |
 | Random Forest            | 25,591.85 | 16,300.5  |
-| XGBoost                  | 26,245.31 | 15,249.45 |
-| Support Vector Regressor | 192,396.7 | 178,205.1 |
+| XGBoost                  | 24,570.33 | 13,785.05 |
+| Support Vector Regressor | 52,333.98 | 30,229.96 |
 
 **Zaključci:**
 
 - Najbolje performanse: **Lasso Regression** (najniža RMSE i MAE)
 - Drugi najbolji: **Ridge Regression**
 - Solidni, ali nešto lošiji: **Random Forest** i **XGBoost**
-- Najlošiji: **Support Vector Regressor** (nije skalirano, što negativno utiče na performanse)
+- Najlošiji: **Support Vector Regressor**
 
 > Ovi rezultati naglašavaju važnost pripreme podataka i odabira odgovarajućeg modela za tačno predviđanje cena kuća.
 
@@ -194,6 +198,6 @@ U radu smo predviđali cene kuća korišćenjem različitih modela. Proces je uk
 
 Najznačajniji faktori koji utiču na cenu su: ukupna površina (`TotalSF`), kvalitet kuće (`OverallQual`), broj garažnih mesta, površina iznad zemlje, starost kuće, kvalitet kuhinje i lokacija (`Neighborhood`). Kreiranjem novih promenljivih, poput `TotalFinishedSF`, `HouseAge`, `HouseRemodAge`, i binarnih promenljivih za podrum, garažu, kamin i bazen, unapređena je prediktivna moć modela.
 
-Projekat se može dodatno unaprediti dodavanjem novih promenljivih, skaliranjem podataka za modele osetljive na veličinu vrednosti (npr. SVR) i preciznijim otkrivanjem outliera pomoću Z-score pristupa.
+Projekat se može dodatno unaprediti dodavanjem novih promenljivih i preciznijim otkrivanjem outliera pomoću Z-score pristupa.
 
 Rad pokazuje da pravilna analiza i priprema podataka, kvalitetan feature engineering i EDA igraju ključnu ulogu u preciznom predviđanju cena kuća. Linearna regresija se pokazala efikasnim i interpretabilnim pristupom, dok napredniji modeli mogu dodatno poboljšati performanse.
